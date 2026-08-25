@@ -1,5 +1,5 @@
-import { Constraint, applyConstraints, parseConstraints } from '../src/version/constraint'
-import { Version } from '../src/version/version'
+import { Constraint, applyConstraints, parseConstraints } from '../src/version/constraint.js'
+import { Version } from '../src/version/version.js'
 
 const allows = (constraint: string, version: string) =>
   new Constraint(constraint).isAllowed(new Version(version))

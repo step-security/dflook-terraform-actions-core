@@ -6,8 +6,12 @@
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "files": ["lib"],
-  "engines": { "node": ">=24.0.0" },
+  "files": [
+    "lib"
+  ],
+  "engines": {
+    "node": ">=24.0.0"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
@@ -16,11 +20,32 @@
   },
   "jest": {
     "preset": "ts-jest",
-    "testMatch": ["**/__tests__/**/*.spec.ts"],
-    "collectCoverageFrom": ["src/**/*.ts"],
+    "testMatch": [
+      "**/__tests__/**/*.spec.ts"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.ts"
+    ],
     "transform": {
-      "^.+\\.ts$": ["ts-jest", { "tsconfig": { "module": "commonjs" } }]
-    }
+      "^.+\\.ts$": [
+        "ts-jest",
+        {
+          "tsconfig": {
+            "module": "commonjs"
+          }
+        }
+      ]
+    },
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1",
+      "^@actions/core$": "<rootDir>/__tests__/stubs/actions-core.ts",
+      "^@actions/exec$": "<rootDir>/__tests__/stubs/actions-exec.ts",
+      "^@actions/tool-cache$": "<rootDir>/__tests__/stubs/actions-tool-cache.ts"
+    },
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/__tests__/stubs/"
+    ]
   },
   "dependencies": {
     "@actions/core": "^3.0.1",

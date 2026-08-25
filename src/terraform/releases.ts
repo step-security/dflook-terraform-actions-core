@@ -1,4 +1,4 @@
-import { Version } from '../version/version'
+import { Version } from '../version/version.js'
 
 /**
  * Discovering which releases exist.

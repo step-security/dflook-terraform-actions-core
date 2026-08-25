@@ -1,6 +1,6 @@
 import { readFileSync, readdirSync, statSync } from 'fs'
 import { extname, join } from 'path'
-import { Constraint, parseConstraints } from '../version/constraint'
+import { Constraint, parseConstraints } from '../version/constraint.js'
 
 /**
  * Reading the few facts we need out of a Terraform module.

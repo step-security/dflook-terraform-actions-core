@@ -7,7 +7,7 @@ import {
   latestVersion,
   sortVersions,
   tryParseVersion,
-} from '../src/version/version'
+} from '../src/version/version.js'
 
 const v = (s: string) => new Version(s)
 
