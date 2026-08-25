@@ -45,10 +45,7 @@ export type { ResolveContext, ResolveInputs, Resolution } from './version/resolv
 // Releases and downloading
 export { ReleaseLookupError, getOpenTofuVersions, getTerraformVersions } from './terraform/releases.js'
 export { DownloadError, acquire, acquireOpenTofu, acquireTerraform } from './terraform/download.js'
-export type { AcquireOptions } from './terraform/download.js'
 export {
-  HASHICORP_KEY_SUFFIX,
-  HASHICORP_SIGNING_KEY,
   VerificationError,
   assertDigest,
   digestFor,

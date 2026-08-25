@@ -2,23 +2,18 @@ import { createHash } from 'crypto'
 import { readFileSync } from 'fs'
 
 /**
- * Verifying that a downloaded release is genuine.
+ * Verifying that a downloaded archive matches its published checksum.
  *
- * There are two independent steps and the order matters. The checksums file is
- * signed by HashiCorp, so it is verified first; only then is the archive checked
- * against it. Checking the archive against an unverified sums file would prove
- * nothing, since whoever supplied a bad archive could supply matching sums.
+ * The digest is compared before the archive is extracted, since extraction is
+ * what would place untrusted code on the runner. Both the checksums file and the
+ * archive are fetched over HTTPS from the same origin, so this establishes
+ * integrity — that the bytes arrived intact and correspond to the release being
+ * requested — rather than provenance.
  *
  * Nothing here reaches the network or the filesystem beyond reading a given
  * path, which keeps the logic that decides whether a binary runs directly
  * testable.
  */
-
-/** HashiCorp's release signing key. */
-export const HASHICORP_SIGNING_KEY = 'C874011F0AB405110D02105534365D9472D7468F'
-
-/** Short key id used in the signature filename HashiCorp publishes. */
-export const HASHICORP_KEY_SUFFIX = '72D7468F'
 
 export class VerificationError extends Error {}
 
