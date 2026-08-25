@@ -1,0 +1,3 @@
+# Built output, committed so consumers can install this as a git dependency
+# without npm needing to run a build step.
+lib/** linguist-generated=true

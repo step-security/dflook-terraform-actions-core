@@ -1,0 +1,1 @@
+{"version":3,"file":"releases.d.ts","sourceRoot":"","sources":["../../src/terraform/releases.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,MAAM,uBAAuB,CAAA;AAoB/C,qBAAa,kBAAmB,SAAQ,KAAK;CAAG;AAahD;;;;;GAKG;AACH,wBAAsB,oBAAoB,IAAI,OAAO,CAAC,OAAO,EAAE,CAAC,CAsB/D;AAED;;;;;GAKG;AACH,wBAAsB,mBAAmB,CAAC,KAAK,CAAC,EAAE,MAAM,GAAG,OAAO,CAAC,OAAO,EAAE,CAAC,CA0B5E"}
