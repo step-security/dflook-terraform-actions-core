@@ -4,6 +4,7 @@ import * as core from '@actions/core'
 import { exec } from '@actions/exec'
 import * as toolCache from '@actions/tool-cache'
 import { Version } from '../version/version'
+import { executableName, releaseArch, releasePlatform } from './platform'
 import {
   HASHICORP_KEY_SUFFIX,
   HASHICORP_SIGNING_KEY,
@@ -18,25 +19,6 @@ const REQUEST_TIMEOUT_MS = 120_000
 
 export class DownloadError extends Error {}
 
-/** Release-channel name for the running operating system. */
-export function releasePlatform(): string {
-  const platforms: Record<string, string> = { linux: 'linux', darwin: 'darwin', win32: 'windows' }
-  const platform = platforms[process.platform]
-  if (!platform) throw new DownloadError(`No release is published for '${process.platform}'`)
-  return platform
-}
-
-/** Release-channel name for the running architecture. */
-export function releaseArch(): string {
-  const architectures: Record<string, string> = { x64: 'amd64', arm64: 'arm64', arm: 'arm' }
-  const arch = architectures[process.arch]
-  if (!arch) throw new DownloadError(`No release is published for '${process.arch}'`)
-  return arch
-}
-
-function executableName(): string {
-  return process.platform === 'win32' ? 'terraform.exe' : 'terraform'
-}
 
 async function fetchTo(url: string, destination: string): Promise<void> {
   const response = await fetch(url, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) })
