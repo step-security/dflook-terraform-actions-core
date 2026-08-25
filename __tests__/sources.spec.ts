@@ -10,9 +10,9 @@ import {
   fromTfswitch,
   parseToolVersions,
   parseTfenv,
-} from '../src/version/sources'
-import { loadModule } from '../src/terraform/module'
-import { Version } from '../src/version/version'
+} from '../src/version/sources.js'
+import { loadModule } from '../src/terraform/module.js'
+import { Version } from '../src/version/version.js'
 
 const AVAILABLE = [
   '0.12.31',

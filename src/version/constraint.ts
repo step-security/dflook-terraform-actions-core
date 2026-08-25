@@ -1,4 +1,4 @@
-import { Version, compareVersions } from './version'
+import { Version, compareVersions } from './version.js'
 
 /**
  * Terraform version constraints.

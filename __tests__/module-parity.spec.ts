@@ -1,11 +1,12 @@
+import { readFileSync } from 'fs'
 import { join } from 'path'
 import {
   getBackendType,
   getRequiredVersionExpression,
   getSensitiveVariables,
   loadModule,
-} from '../src/terraform/module'
-import expectations from './fixtures/module-expectations.json'
+} from '../src/terraform/module.js'
+
 
 /**
  * Differential test of the module reader against a real HCL parser.
@@ -26,7 +27,10 @@ interface Expectation {
   sensitive: string[]
 }
 
-const cases = expectations as Expectation[]
+// Read as data rather than imported as a module; see upstream-parity.spec.ts.
+const cases = JSON.parse(
+  readFileSync(join(__dirname, 'fixtures', 'module-expectations.json'), 'utf8')
+) as Expectation[]
 const fixtureRoot = join(__dirname, 'fixtures', 'modules')
 
 describe('module reader agrees with python-hcl2', () => {

@@ -1,8 +1,8 @@
 import { existsSync, readFileSync, statSync } from 'fs'
 import { dirname, join, resolve } from 'path'
-import { Constraint, applyConstraints, parseConstraints } from './constraint'
-import { Version, latestFinalVersion, latestVersion } from './version'
-import { TerraformModule, getVersionConstraints } from '../terraform/module'
+import { Constraint, applyConstraints, parseConstraints } from './constraint.js'
+import { Version, latestFinalVersion, latestVersion } from './version.js'
+import { TerraformModule, getVersionConstraints } from '../terraform/module.js'
 
 /**
  * The individual places a Terraform version can be declared.

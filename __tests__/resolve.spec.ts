@@ -1,10 +1,10 @@
 import { mkdtempSync, writeFileSync } from 'fs'
 import { tmpdir } from 'os'
 import { join } from 'path'
-import { Constraint } from '../src/version/constraint'
-import { candidateVersions, resolveVersion } from '../src/version/resolve'
-import { Version } from '../src/version/version'
-import { loadModule } from '../src/terraform/module'
+import { Constraint } from '../src/version/constraint.js'
+import { candidateVersions, resolveVersion } from '../src/version/resolve.js'
+import { Version } from '../src/version/version.js'
+import { loadModule } from '../src/terraform/module.js'
 
 /**
  * Architecture is mocked so results do not depend on the machine running the

@@ -3,15 +3,15 @@ import { join } from 'path'
 import * as core from '@actions/core'
 import { exec } from '@actions/exec'
 import * as toolCache from '@actions/tool-cache'
-import { Version } from '../version/version'
-import { executableName, releaseArch, releasePlatform } from './platform'
+import { Version } from '../version/version.js'
+import { executableName, releaseArch, releasePlatform } from './platform.js'
 import {
   HASHICORP_KEY_SUFFIX,
   HASHICORP_SIGNING_KEY,
   VerificationError,
   assertDigest,
   digestFor,
-} from './verify'
+} from './verify.js'
 
 const TERRAFORM_RELEASES = 'https://releases.hashicorp.com/terraform'
 const OPENTOFU_RELEASES = 'https://github.com/opentofu/opentofu/releases/download'

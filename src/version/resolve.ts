@@ -1,4 +1,4 @@
-import { Constraint, applyConstraints } from './constraint'
+import { Constraint, applyConstraints } from './constraint.js'
 import {
   fromAsdf,
   fromEnvironment,
@@ -6,10 +6,10 @@ import {
   fromRequiredVersion,
   fromTfenv,
   fromTfswitch,
-} from './sources'
-import { Version, latestFinalVersion } from './version'
-import { TerraformModule, getBackendType } from '../terraform/module'
-import { releaseArch } from '../terraform/platform'
+} from './sources.js'
+import { Version, latestFinalVersion } from './version.js'
+import { TerraformModule, getBackendType } from '../terraform/module.js'
+import { releaseArch } from '../terraform/platform.js'
 
 /**
  * Choosing which version to run.

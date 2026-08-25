@@ -1,6 +1,7 @@
-import { Constraint } from '../src/version/constraint'
-import { Version } from '../src/version/version'
-import matrix from './upstream-constraint-matrix.json'
+import { Constraint } from '../src/version/constraint.js'
+import { Version } from '../src/version/version.js'
+import { readFileSync } from 'fs'
+import { join } from 'path'
 
 /**
  * Differential test against upstream's own implementation.
@@ -17,7 +18,11 @@ interface Case {
   allowed: boolean | string
 }
 
-const cases = matrix as Case[]
+// Read as data rather than imported as a module: the tests transpile to
+// CommonJS, where the import attribute nodenext requires is not permitted.
+const cases = JSON.parse(
+  readFileSync(join(__dirname, 'upstream-constraint-matrix.json'), 'utf8')
+) as Case[]
 
 describe('constraint behaviour matches upstream', () => {
   it('covers a broad matrix', () => {

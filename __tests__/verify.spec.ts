@@ -8,7 +8,7 @@ import {
   assertDigest,
   digestFor,
   sha256OfFile,
-} from '../src/terraform/verify'
+} from '../src/terraform/verify.js'
 
 const ARCHIVE = 'terraform_1.15.9_linux_amd64.zip'
 
