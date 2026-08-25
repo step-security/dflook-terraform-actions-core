@@ -1,0 +1,586 @@
+[
+ {
+  "module": "plugin-cache",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "tofu-module",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__pull_request_review",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__pull_request_target",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__repository_dispatch",
+  "requiredVersion": "~>1.3.7",
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-apply__apply-error",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-apply__backend_config_12",
+  "requiredVersion": "~> 0.12.0",
+  "backend": "s3",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-apply__backend_config_13",
+  "requiredVersion": "~> 0.13.0",
+  "backend": "s3",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-apply__changes",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-apply__deprecated_var",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-apply__destroy_mode",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-apply__ephemeral",
+  "requiredVersion": ">=1.10",
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-apply__error",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-apply__long_outputs",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-apply__long_plan",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-apply__multiple_var_files",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-apply__no_changes",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-apply__no_plan",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-apply__outputs",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-apply__partial_backend",
+  "requiredVersion": "~> 0.12.0",
+  "backend": "s3",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-apply__refresh_15",
+  "requiredVersion": "~> 0.15.0",
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-apply__remote",
+  "requiredVersion": "~> 0.12.0",
+  "backend": "s3",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-apply__vars",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-apply__warnings",
+  "requiredVersion": "1.2.4",
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-binary-plan",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-changes-only",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-check__changes",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-check__no_changes",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-cloud__0.13",
+  "requiredVersion": "0.13.0",
+  "backend": "remote",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-cloud__1.0",
+  "requiredVersion": "~> 1.0.0",
+  "backend": "remote",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-cloud__1.1",
+  "requiredVersion": "1.1.0",
+  "backend": "remote",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-cloud__partial",
+  "requiredVersion": "~> 1.6.0",
+  "backend": "cloud",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-early-eval__s3",
+  "requiredVersion": "1.9.0",
+  "backend": "s3",
+  "sensitive": [
+   "passphrase"
+  ]
+ },
+ {
+  "module": "workflows__test-fmt-check__canonical",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-fmt-check__canonical__subdir",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-fmt-check__non-canonical",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-fmt-check__non-canonical__subdir",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-fmt__canonical",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-fmt__canonical__subdir",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-fmt__non-canonical",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-fmt__non-canonical__subdir",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-http",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-http__http-module",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-http__test-module",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-new-workspace",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-output",
+  "requiredVersion": "~> 0.12.0",
+  "backend": "s3",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-plan__always-new",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-plan__changes-only",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-plan__colours",
+  "requiredVersion": "~> 1.5.0",
+  "backend": "s3",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-plan__error",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-plan__no_changes",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-plan__plan",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-plan__plan_11",
+  "requiredVersion": "~> 0.11.0",
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-plan__plan_12",
+  "requiredVersion": "~> 0.12.0",
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-plan__plan_13",
+  "requiredVersion": "~> 0.13.0",
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-plan__plan_14",
+  "requiredVersion": "~> 0.14.0",
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-plan__plan_15",
+  "requiredVersion": "0.15.3",
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-plan__plan_15_4",
+  "requiredVersion": "~>0.15.4",
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-plan__self-hosted",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-plan__sensitive_var",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": [
+   "my_sensitive_var"
+  ]
+ },
+ {
+  "module": "workflows__test-plan__sensitive_variables",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": [
+   "complex_sensitive",
+   "my_sensitive_string"
+  ]
+ },
+ {
+  "module": "workflows__test-plan__single_sensitive_variable",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": [
+   "my_sensitive_string"
+  ]
+ },
+ {
+  "module": "workflows__test-plan__vars",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": [
+   "my_sensitive_string"
+  ]
+ },
+ {
+  "module": "workflows__test-refresh",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-registry",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-registry__test-module",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-ssh",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-ssh__test-module",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-target-replace-exclude",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-test__local",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-test__local__sleep",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-unlock-state",
+  "requiredVersion": "~> 1.3.6",
+  "backend": "s3",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-validate__invalid",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-validate__unterminated-string",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-validate__valid",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-validate__workspace_eval",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-validate__workspace_eval_remote",
+  "requiredVersion": null,
+  "backend": "remote",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-version__cloud",
+  "requiredVersion": null,
+  "backend": "cloud",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-version__hard-parse",
+  "requiredVersion": "1.10.4",
+  "backend": "s3",
+  "sensitive": [
+   "also_sensitive",
+   "should-be-sensitive"
+  ]
+ },
+ {
+  "module": "workflows__test-version__hard-parse__module",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-version__local",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-version__partial-cloud",
+  "requiredVersion": null,
+  "backend": "cloud",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-version__partial-cloud-tags",
+  "requiredVersion": null,
+  "backend": "cloud",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-version__providers__0.11",
+  "requiredVersion": "~>0.11.0",
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-version__providers__0.12",
+  "requiredVersion": "~>0.12.0",
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-version__providers__0.13",
+  "requiredVersion": "~> 0.13.0",
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-version__range",
+  "requiredVersion": ">=0.12.0,<=0.12.5",
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-version__required_version",
+  "requiredVersion": "0.12.26",
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-version__state",
+  "requiredVersion": null,
+  "backend": "s3",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-version__terraform-cloud",
+  "requiredVersion": null,
+  "backend": "remote",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-version__tfenv",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-version__tfswitch",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-version__tofuenv",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-version__v-prefix",
+  "requiredVersion": "<= v0.12.26",
+  "backend": "local",
+  "sensitive": []
+ },
+ {
+  "module": "workflows__test-workflow-commands",
+  "requiredVersion": null,
+  "backend": "local",
+  "sensitive": []
+ }
+]

@@ -1,0 +1,37 @@
+{
+  "name": "@step-security/dflook-terraform-actions-core",
+  "description": "Shared implementation behind the StepSecurity dflook Terraform maintained actions",
+  "version": "0.1.0",
+  "license": "MIT",
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": ["lib"],
+  "engines": { "node": ">=24.0.0" },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "prepare": "npm run build"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testMatch": ["**/__tests__/**/*.spec.ts"],
+    "collectCoverageFrom": ["src/**/*.ts"],
+    "transform": {
+      "^.+\\.ts$": ["ts-jest", { "tsconfig": { "module": "commonjs" } }]
+    }
+  },
+  "dependencies": {
+    "@actions/core": "^3.0.1",
+    "@actions/exec": "^3.0.0",
+    "@actions/tool-cache": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.6",
+    "@types/node": "^22.15.21",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "typescript": "5.8.3"
+  }
+}
