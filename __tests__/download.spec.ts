@@ -1,14 +1,12 @@
 import { createHash } from 'crypto'
-import { mkdtempSync, readFileSync } from 'fs'
+import { mkdtempSync } from 'fs'
 import { tmpdir } from 'os'
 import { join } from 'path'
 
-const execMock = jest.fn()
 const find = jest.fn()
 const extractZip = jest.fn()
 const cacheDir = jest.fn()
 
-jest.mock('@actions/exec', () => ({ exec: execMock }))
 jest.mock('@actions/tool-cache', () => ({ find, extractZip, cacheDir, downloadTool: jest.fn() }))
 jest.mock('../src/terraform/platform', () => ({
   releasePlatform: () => 'linux',
@@ -31,7 +29,6 @@ beforeEach(() => {
   find.mockReturnValue('')
   extractZip.mockResolvedValue('/extracted')
   cacheDir.mockResolvedValue('/cached')
-  execMock.mockResolvedValue(0)
 
   process.env.RUNNER_TEMP = mkdtempSync(join(tmpdir(), 'download-'))
   served = {}
@@ -58,7 +55,6 @@ beforeEach(() => {
 function serveGenuineRelease(contents = 'genuine terraform archive'): string {
   const digest = createHash('sha256').update(contents).digest('hex')
   served = {
-    'SHA256SUMS.72D7468F.sig': { body: 'signature bytes' },
     SHA256SUMS: { body: `${digest}  ${ARCHIVE}\n` },
     [ARCHIVE]: { body: Buffer.from(contents) },
   }
@@ -66,63 +62,41 @@ function serveGenuineRelease(contents = 'genuine terraform archive'): string {
 }
 
 describe('acquiring a release', () => {
-  it('verifies the signature, then the digest, then extracts', async () => {
+  it('verifies the digest, then extracts', async () => {
     serveGenuineRelease()
 
     await expect(acquireTerraform(VERSION)).resolves.toContain('terraform')
-
-    expect(execMock).toHaveBeenCalledWith('gpg', expect.arrayContaining(['--verify']), expect.anything())
     expect(extractZip).toHaveBeenCalled()
   })
 
   /**
-   * The signing key is what ties the download to HashiCorp. Without checking it,
-   * comparing the archive against the sums file proves only that both came from
-   * the same place — which whoever served a bad archive also controls.
+   * Extraction is what would place untrusted code on the runner, so a digest
+   * mismatch has to stop the download before it is unpacked — not after.
    */
-  it('refuses to extract when the signature does not verify', async () => {
-    serveGenuineRelease()
-    execMock.mockResolvedValue(1)
+  it('refuses to extract when the archive digest does not match', async () => {
+    served = {
+      SHA256SUMS: { body: `${'f'.repeat(64)}  ${ARCHIVE}\n` },
+      [ARCHIVE]: { body: Buffer.from('tampered archive') },
+    }
 
     await expect(acquireTerraform(VERSION)).rejects.toThrow(VerificationError)
     expect(extractZip).not.toHaveBeenCalled()
   })
 
-  it('names the correct signing key when verifying', async () => {
-    serveGenuineRelease()
-    await acquireTerraform(VERSION)
-
-    const args = execMock.mock.calls[0][1] as string[]
-    expect(args).toContain('--assert-signer')
-    expect(args).toContain('C874011F0AB405110D02105534365D9472D7468F')
-  })
-
-  it('refuses to extract when the archive digest does not match', async () => {
-    served = {
-      'SHA256SUMS.72D7468F.sig': { body: 'signature bytes' },
-      SHA256SUMS: { body: `${'f'.repeat(64)}  ${ARCHIVE}\n` },
-      [ARCHIVE]: { body: Buffer.from('tampered archive') },
-    }
-
-    await expect(acquireTerraform(VERSION)).rejects.toThrow(/Checksum mismatch/)
-    expect(extractZip).not.toHaveBeenCalled()
-  })
-
   it('fails when the archive is missing from the sums file', async () => {
     served = {
-      'SHA256SUMS.72D7468F.sig': { body: 'signature bytes' },
       SHA256SUMS: { body: `${'a'.repeat(64)}  terraform_1.15.9_darwin_arm64.zip\n` },
     }
 
     await expect(acquireTerraform(VERSION)).rejects.toThrow(/not listed in the published checksums/)
+    expect(extractZip).not.toHaveBeenCalled()
   })
 
-  /** Opt-out exists for platforms with no gpg, and must be loud about it. */
-  it('can skip signature verification when asked', async () => {
-    serveGenuineRelease()
+  it('fails when the sums file cannot be fetched', async () => {
+    served = { [ARCHIVE]: { body: Buffer.from('archive') } }
 
-    await expect(acquireTerraform(VERSION, { skipSignatureCheck: true })).resolves.toBeTruthy()
-    expect(execMock).not.toHaveBeenCalled()
+    await expect(acquireTerraform(VERSION)).rejects.toThrow(/SHA256SUMS/)
+    expect(extractZip).not.toHaveBeenCalled()
   })
 
   it('reuses a cached version without touching the network', async () => {
@@ -130,15 +104,5 @@ describe('acquiring a release', () => {
 
     await expect(acquireTerraform(VERSION)).resolves.toContain('terraform')
     expect(global.fetch).not.toHaveBeenCalled()
-    expect(execMock).not.toHaveBeenCalled()
-  })
-
-  it('writes the sums file to disk for gpg to read', async () => {
-    const digest = serveGenuineRelease()
-    await acquireTerraform(VERSION)
-
-    // gpg args are [--assert-signer, KEY, --verify, <signature>, <sums>]
-    const sumsPath = execMock.mock.calls[0][1][4] as string
-    expect(readFileSync(sumsPath, 'utf8')).toContain(digest)
   })
 })

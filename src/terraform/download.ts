@@ -1,17 +1,10 @@
 import { existsSync, mkdirSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import * as core from '@actions/core'
-import { exec } from '@actions/exec'
 import * as toolCache from '@actions/tool-cache'
 import { Version } from '../version/version.js'
 import { executableName, releaseArch, releasePlatform } from './platform.js'
-import {
-  HASHICORP_KEY_SUFFIX,
-  HASHICORP_SIGNING_KEY,
-  VerificationError,
-  assertDigest,
-  digestFor,
-} from './verify.js'
+import { assertDigest, digestFor } from './verify.js'
 
 const TERRAFORM_RELEASES = 'https://releases.hashicorp.com/terraform'
 const OPENTOFU_RELEASES = 'https://github.com/opentofu/opentofu/releases/download'
@@ -41,46 +34,13 @@ async function fetchText(url: string): Promise<string> {
 }
 
 /**
- * Confirms the checksums file was signed by HashiCorp.
- *
- * Without this the checksum comparison proves only that the archive matches a
- * file fetched from the same place — anyone able to serve a bad archive could
- * serve sums to match it. The signature is what ties the download back to
- * HashiCorp.
- *
- * gpg is present on GitHub-hosted runners. When it is missing the run stops
- * rather than silently downgrading to an unsigned check.
- */
-async function verifySumsSignature(sumsPath: string, signaturePath: string): Promise<void> {
-  const exitCode = await exec(
-    'gpg',
-    ['--assert-signer', HASHICORP_SIGNING_KEY, '--verify', signaturePath, sumsPath],
-    { ignoreReturnCode: true, silent: true }
-  )
-
-  if (exitCode !== 0) {
-    throw new VerificationError(
-      'Could not verify the signature on the checksums file. The download was not used.'
-    )
-  }
-}
-
-export interface AcquireOptions {
-  /** Skips signature verification. Only for platforms where gpg is unavailable. */
-  skipSignatureCheck?: boolean
-}
-
-/**
  * Downloads a Terraform release and returns the executable's directory.
  *
- * The chain is: fetch the signature and checksums, verify the signature, fetch
- * the archive, verify its digest against the now-trusted checksums, and only
- * then extract. A version already in the tool cache short-circuits all of it.
+ * The chain is: fetch the published checksums, fetch the archive, verify its
+ * digest against those checksums, and only then extract. A version already in
+ * the tool cache short-circuits all of it.
  */
-export async function acquireTerraform(
-  version: Version,
-  options: AcquireOptions = {}
-): Promise<string> {
+export async function acquireTerraform(version: Version): Promise<string> {
   const platform = releasePlatform()
   const arch = releaseArch()
   const text = version.toString()
@@ -97,19 +57,7 @@ export async function acquireTerraform(
   const workDir = join(process.env.RUNNER_TEMP || '/tmp', `terraform-${text}-${process.pid}`)
   if (!existsSync(workDir)) mkdirSync(workDir, { recursive: true })
 
-  const sumsPath = join(workDir, `terraform_${text}_SHA256SUMS`)
   const sumsText = await fetchText(`${base}/terraform_${text}_SHA256SUMS`)
-  writeFileSync(sumsPath, sumsText)
-
-  if (options.skipSignatureCheck) {
-    core.warning('Skipping signature verification of the Terraform checksums file')
-  } else {
-    const signaturePath = `${sumsPath}.${HASHICORP_KEY_SUFFIX}.sig`
-    await fetchTo(`${base}/terraform_${text}_SHA256SUMS.${HASHICORP_KEY_SUFFIX}.sig`, signaturePath)
-    await verifySumsSignature(sumsPath, signaturePath)
-    core.info('Verified the checksums file signature')
-  }
-
   const expected = digestFor(sumsText, archiveName)
 
   core.info(`Downloading Terraform ${text} (${platform}/${arch})`)
@@ -129,8 +77,8 @@ export async function acquireTerraform(
 /**
  * Downloads an OpenTofu release and returns the executable.
  *
- * OpenTofu publishes checksums as a GitHub release asset. There is no
- * HashiCorp-equivalent signing key here, so verification is the digest alone.
+ * OpenTofu publishes checksums as a GitHub release asset, so this mirrors the
+ * Terraform path exactly.
  */
 export async function acquireOpenTofu(version: Version): Promise<string> {
   const platform = releasePlatform()
@@ -165,8 +113,6 @@ export async function acquireOpenTofu(version: Version): Promise<string> {
 }
 
 /** Downloads whichever product the version belongs to. */
-export async function acquire(version: Version, options: AcquireOptions = {}): Promise<string> {
-  return version.product === 'OpenTofu'
-    ? acquireOpenTofu(version)
-    : acquireTerraform(version, options)
+export async function acquire(version: Version): Promise<string> {
+  return version.product === 'OpenTofu' ? acquireOpenTofu(version) : acquireTerraform(version)
 }

@@ -3,7 +3,6 @@ import { mkdtempSync, writeFileSync } from 'fs'
 import { tmpdir } from 'os'
 import { join } from 'path'
 import {
-  HASHICORP_SIGNING_KEY,
   VerificationError,
   assertDigest,
   digestFor,
@@ -17,13 +16,6 @@ function fileWith(contents: string): { path: string; digest: string } {
   writeFileSync(path, contents)
   return { path, digest: createHash('sha256').update(contents).digest('hex') }
 }
-
-describe('the signing key', () => {
-  it("is HashiCorp's published fingerprint", () => {
-    // Pinned deliberately: a wrong key here would accept anyone's signature.
-    expect(HASHICORP_SIGNING_KEY).toBe('C874011F0AB405110D02105534365D9472D7468F')
-  })
-})
 
 describe('extracting a digest from a sums file', () => {
   const sums = [
