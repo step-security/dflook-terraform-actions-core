@@ -48,7 +48,11 @@ rather than against our own expectations:
 - **Module reading** is checked against `python-hcl2` 7.3.1, the parser and
   version upstream pins, over the Terraform fixtures in its test suite.
 
-Regenerating either after an upstream change is how we detect drift.
+Regenerating either after an upstream change is how we detect drift — see
+[scripts/regenerate-expectations.md](scripts/regenerate-expectations.md). Note
+that `python-hcl2` must be pinned to **7.3.1**, the version upstream itself
+pins: 8.x returns values with their surrounding quote characters and would
+silently invalidate every expectation.
 
 ## Development
 
