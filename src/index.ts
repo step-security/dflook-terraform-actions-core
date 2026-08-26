@@ -184,3 +184,30 @@ export {
 export type { BackendConfig, CompleteConfigInputs } from './comment/backend-config.js'
 export { backendFingerprint, canonicalJson } from './comment/backend-fingerprint.js'
 export type { FingerprintOptions } from './comment/backend-fingerprint.js'
+export {
+  GitHubClient,
+  GitHubError,
+  WorkflowError,
+  findPullRequest,
+  nextLink,
+} from './comment/github.js'
+export type {
+  EventContext,
+  GitHubClientOptions,
+  GitHubComment,
+  PullRequest,
+} from './comment/github.js'
+export {
+  findPlanComment,
+  isApproved,
+  isBinaryPlanApproved,
+  planCommentHeaders,
+  planModifierHash,
+  writePlanComment,
+} from './comment/plan-comment.js'
+export type {
+  FoundComment,
+  PlanIdentity,
+  PlanModifier,
+  UpdateOptions,
+} from './comment/plan-comment.js'
