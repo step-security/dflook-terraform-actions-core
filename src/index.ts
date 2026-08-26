@@ -175,3 +175,12 @@ export {
   renderComment,
 } from './comment/comment.js'
 export type { CommentHeaders, ParsedComment, RenderOptions } from './comment/comment.js'
+export {
+  completeBackendConfig,
+  readBackendConfigFiles,
+  readBackendConfigInput,
+  readModuleBackendConfig,
+} from './comment/backend-config.js'
+export type { BackendConfig, CompleteConfigInputs } from './comment/backend-config.js'
+export { backendFingerprint, canonicalJson } from './comment/backend-fingerprint.js'
+export type { FingerprintOptions } from './comment/backend-fingerprint.js'
