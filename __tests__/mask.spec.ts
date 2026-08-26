@@ -185,3 +185,37 @@ describe('preserving the shape of the output', () => {
     expect(maskOutput('')).toBe('')
   })
 })
+
+/**
+ * The line patterns must stay linear in the length of the line. Plan output can
+ * contain a single attribute holding an entire JSON document, so a quadratic
+ * pattern is reachable in normal use, not just by a hostile module.
+ */
+describe('masking cost', () => {
+  it.each([
+    ['a long line with no colon', `random_id.x ${'a'.repeat(60_000)}`],
+    ['a long line of colons', `random_id.x${':'.repeat(60_000)}`],
+    ['a long indented assignment', `        key = "${'a'.repeat(60_000)}`],
+    ['a long run of spaces', `${' '.repeat(60_000)}=`],
+  ])('handles %s promptly', (_label, line) => {
+    const started = Date.now()
+    new Masker().line(line)
+    expect(Date.now() - started).toBeLessThan(1000)
+  })
+
+  it('still tracks the resource on a normal status line', () => {
+    const masker = new Masker()
+    masker.line('random_id.some_id: Creating...')
+    // The id of a secret-bearing resource is masked, which only happens when
+    // the resource was tracked from the preceding line.
+    expect(masker.line('random_id.some_id: Creation complete [id=abc123]')).toContain('[id=******]')
+  })
+
+  /** A resource address containing a colon must still be recognised. */
+  it('finds the first colon-space, not the first colon', () => {
+    const masker = new Masker()
+    expect(
+      masker.line('module.a["x:y"].random_id.z: Creation complete [id=abc123]')
+    ).toContain('[id=')
+  })
+})

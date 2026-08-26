@@ -91,6 +91,23 @@ export {
 } from './terraform/plan.js'
 export type { PlanArgsInputs, PlanOptions, PlanResult } from './terraform/plan.js'
 
+export {
+  compactPlan,
+  runApply,
+  savedPlanHasNoChanges,
+} from './terraform/apply.js'
+export type { ApplyFailure, ApplyOptions, ApplyResult } from './terraform/apply.js'
+export { getLockInfo, isStateLocked } from './terraform/lock.js'
+export type { LockInfo } from './terraform/lock.js'
+export {
+  OutputParseError,
+  flattenOutputs,
+  outputCommands,
+  parseOutputs,
+  publishOutputs,
+} from './terraform/outputs.js'
+export type { OutputCommand, TerraformOutput, TerraformOutputs } from './terraform/outputs.js'
+
 // Redacting sensitive values from output
 export {
   DEFAULT_RESOURCES_PATTERN,
@@ -139,3 +156,58 @@ export {
   warning,
   withWorkflowCommandsStopped,
 } from './actions/workflow.js'
+// Deciding whether a plan was approved
+export {
+  commentHash,
+  normalisePlan,
+  planHash,
+  planOutHash,
+  planTextMatches,
+  removeUnchangedAttributes,
+  removeWarnings,
+} from './comment/hash.js'
+export {
+  collapseThreshold,
+  formatHeaders,
+  matchingHeaders,
+  parseComment,
+  parseHeaders,
+  renderComment,
+} from './comment/comment.js'
+export type { CommentHeaders, ParsedComment, RenderOptions } from './comment/comment.js'
+export {
+  completeBackendConfig,
+  readBackendConfigFiles,
+  readBackendConfigInput,
+  readModuleBackendConfig,
+} from './comment/backend-config.js'
+export type { BackendConfig, CompleteConfigInputs } from './comment/backend-config.js'
+export { backendFingerprint, canonicalJson } from './comment/backend-fingerprint.js'
+export type { FingerprintOptions } from './comment/backend-fingerprint.js'
+export {
+  GitHubClient,
+  GitHubError,
+  WorkflowError,
+  findPullRequest,
+  nextLink,
+} from './comment/github.js'
+export type {
+  EventContext,
+  GitHubClientOptions,
+  GitHubComment,
+  PullRequest,
+} from './comment/github.js'
+export {
+  findPlanComment,
+  isApproved,
+  isBinaryPlanApproved,
+  planCommentHeaders,
+  planModifierHash,
+  writePlanComment,
+} from './comment/plan-comment.js'
+export type {
+  FoundComment,
+  PlanIdentity,
+  PlanModifier,
+  UpdateOptions,
+} from './comment/plan-comment.js'

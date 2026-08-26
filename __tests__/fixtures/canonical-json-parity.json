@@ -1,0 +1,60 @@
+[
+  {
+    "name": "s3-typical",
+    "value": {
+      "bucket": "my-state",
+      "key": "terraform.tfstate",
+      "endpoint": "",
+      "workspace_key_prefix": ""
+    },
+    "canonical": "{\"bucket\":\"my-state\",\"endpoint\":\"\",\"key\":\"terraform.tfstate\",\"workspace_key_prefix\":\"\"}"
+  },
+  {
+    "name": "key-order",
+    "value": {
+      "z": "1",
+      "a": "2",
+      "M": "3",
+      "_": "4"
+    },
+    "canonical": "{\"M\":\"3\",\"_\":\"4\",\"a\":\"2\",\"z\":\"1\"}"
+  },
+  {
+    "name": "null-value",
+    "value": {
+      "domain_name": null,
+      "container": "c"
+    },
+    "canonical": "{\"container\":\"c\",\"domain_name\":null}"
+  },
+  {
+    "name": "unicode",
+    "value": {
+      "name": "café-✓",
+      "other": "naïve"
+    },
+    "canonical": "{\"name\":\"café-✓\",\"other\":\"naïve\"}"
+  },
+  {
+    "name": "local",
+    "value": {
+      "path": "infra",
+      "workspace_dir": "ws"
+    },
+    "canonical": "{\"path\":\"infra\",\"workspace_dir\":\"ws\"}"
+  },
+  {
+    "name": "empty",
+    "value": {},
+    "canonical": "{}"
+  },
+  {
+    "name": "nested-workspaces",
+    "value": {
+      "hostname": "app.terraform.io",
+      "organization": "acme",
+      "workspaces": "name = \"prod\""
+    },
+    "canonical": "{\"hostname\":\"app.terraform.io\",\"organization\":\"acme\",\"workspaces\":\"name = \\\"prod\\\"\"}"
+  }
+]
