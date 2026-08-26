@@ -115,7 +115,12 @@ export type {
   WrittenCredentials,
 } from './setup/credentials.js'
 
-export { TfVarsError, autoTfVarsName, writeAutoTfVars } from './setup/tfvars.js'
+export {
+  TfVarsError,
+  autoTfVarsName,
+  deleteAutoTfVars,
+  writeAutoTfVars,
+} from './setup/tfvars.js'
 export type { TfVarsInputs, WrittenTfVars } from './setup/tfvars.js'
 
 export { PreRunError, runPreRunCommands } from './setup/pre-run.js'
