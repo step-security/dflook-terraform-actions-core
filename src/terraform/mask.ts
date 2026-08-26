@@ -77,24 +77,36 @@ const DIALECTS: Record<'0.11' | '0.12', Dialect> = {
     planStatus: /^(.*?): (.*?) +\(ID: (.*?)\)$/,
     planLine: /^( +)([a-zA-Z0-9%._-]+):( +)(["<])(.*?)([>"]) +=> +(["<])(.*)([>"])(.*)$/,
     currentResource: /^([~/+-]+) (.*?) +(.*)$/,
-    mapKeyPair: /^(\s+(?:[~+-] )?)(.*)(\s?[=:])(\s+)"(.*)"$/i,
+    mapKeyPair: /^(\s+(?:[~+-] )?)(\S.*?)(\s?[=:])(\s+)"(.*)"$/i,
     resourceGroup: 2,
     assign: ':',
     operator: '=>',
   },
   '0.12': {
     planStatus: /^(.*?): (.*?) +\[id=(.*?)\]$/,
-    planLine: /^( +)([ ~a-zA-Z0-9%._-]+)=( +)(["<])(.*?)([>"]) +-> +(\()(.*)(\))(.*)$/,
+    planLine: /^( +)([~a-zA-Z0-9%._-][ ~a-zA-Z0-9%._-]*)=( +)(["<])(.*?)([>"]) +-> +(\()(.*)(\))(.*)$/,
     currentResource: /^([~/+-]+) (.*?) +(.*) (.*) (.*)$/,
-    mapKeyPair: /^(\s+(?:[~+-] )?)(.*)(\s=)(\s+)"(.*)"$/i,
+    mapKeyPair: /^(\s+(?:[~+-] )?)(\S.*?)(\s=)(\s+)"(.*)"$/i,
     resourceGroup: 3,
     assign: '=',
     operator: '->',
   },
 }
 
-/** Set when a line names the resource that following lines belong to. */
-const APPLY_CURRENT_RESOURCE = /^([a-z].*?): (.*?)$/
+/**
+ * Set when a line names the resource that following lines belong to.
+ *
+ * Written to be linear in the length of the line.
+ *
+ * The obvious form, `^([a-z].*?): (.*?)$`, retries every split position when a
+ * line has no `": "` in it, which is quadratic. Plan output lines can be long —
+ * a single attribute may hold an entire JSON document — so that is reachable.
+ *
+ * `(?:[^:\n]|:(?! ))*` consumes anything up to the first `": "` without ever
+ * having a choice about where to stop, which matches the same strings as the
+ * lazy form but cannot backtrack.
+ */
+const APPLY_CURRENT_RESOURCE = /^([a-z](?:[^:\n]|:(?! ))*): (.*)$/
 
 function maskValue(value: string, maskChar: string): string {
   if (NOT_A_VALUE.includes(value)) return value
