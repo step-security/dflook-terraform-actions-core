@@ -1,0 +1,7 @@
+random_id.some_id: Refreshing state... [id=***************************************]
+random_string.some_password: Refreshing state... [id=2iB@@h22@12kA2qE]
+random_id.some_id: Creation complete after 0s [id=******]
+aws_db_instance.main: Modifying... [id=db-9999]
+kubernetes_secret.creds: Creation complete after 1s [id=*************]
+acme_certificate.cert: Creation complete after 2s [id=*******************************]
+aws_instance.web: Still creating... [10s elapsed]
