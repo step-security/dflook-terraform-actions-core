@@ -211,3 +211,4 @@ export type {
   PlanModifier,
   UpdateOptions,
 } from './comment/plan-comment.js'
+export { getRemoteRunId, isRemoteExecution } from './terraform/run-id.js'
