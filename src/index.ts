@@ -91,6 +91,23 @@ export {
 } from './terraform/plan.js'
 export type { PlanArgsInputs, PlanOptions, PlanResult } from './terraform/plan.js'
 
+export {
+  compactPlan,
+  runApply,
+  savedPlanHasNoChanges,
+} from './terraform/apply.js'
+export type { ApplyFailure, ApplyOptions, ApplyResult } from './terraform/apply.js'
+export { getLockInfo, isStateLocked } from './terraform/lock.js'
+export type { LockInfo } from './terraform/lock.js'
+export {
+  OutputParseError,
+  flattenOutputs,
+  outputCommands,
+  parseOutputs,
+  publishOutputs,
+} from './terraform/outputs.js'
+export type { OutputCommand, TerraformOutput, TerraformOutputs } from './terraform/outputs.js'
+
 // Redacting sensitive values from output
 export {
   DEFAULT_RESOURCES_PATTERN,
