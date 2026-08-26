@@ -1,0 +1,2 @@
+      ~ password = "pässwörd✓" -> ("naïve→value")
+        secret_key = "🔑🔑🔑"

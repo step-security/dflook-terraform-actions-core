@@ -1,0 +1,7 @@
+        token = ""
+        key = "sensitive"
+        password = "known after apply"
+        secret = "computed"
+        my_id = "<computed"
+      ~ result = "a" -> (known after apply)
+no_indent_key = "notmasked"

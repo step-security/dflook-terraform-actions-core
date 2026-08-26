@@ -31,7 +31,8 @@
         "ts-jest",
         {
           "tsconfig": {
-            "module": "commonjs"
+            "module": "commonjs",
+            "verbatimModuleSyntax": false
           }
         }
       ]

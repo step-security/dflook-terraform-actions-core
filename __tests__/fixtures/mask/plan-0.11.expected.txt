@@ -1,0 +1,6 @@
+  ~ aws_codepipeline.pipeline
+      stage.0.action.0.configuration.OAuthToken: <*******> => <*******>
+      stage.0.action.0.configuration.DontObfuscate: <tf.0.11> => <tf.0.11>
+      id:               "" => <computed> (forces new resource)
+  + random_id.some_id
+      result:           "" => <computed>

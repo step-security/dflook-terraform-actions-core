@@ -1,4 +1,9 @@
-import { Constraint, applyConstraints, parseConstraints } from '../src/version/constraint.js'
+import {
+  Constraint,
+  InvalidConstraint,
+  applyConstraints,
+  parseConstraints,
+} from '../src/version/constraint.js'
 import { Version } from '../src/version/version.js'
 
 const allows = (constraint: string, version: string) =>
@@ -132,5 +137,33 @@ describe('combining constraints', () => {
 
   it('ignores empty clauses and trailing commas', () => {
     expect(parseConstraints('>= 1.5, ,')).toHaveLength(1)
+  })
+})
+
+/**
+ * The parsing patterns must stay linear in the length of the input. `.` does not
+ * match a newline, so combining it with a preceding repeated group makes the
+ * engine backtrack through every split looking for a match that cannot exist.
+ */
+describe('parsing cost', () => {
+  it('rejects a long run of operator characters promptly', () => {
+    const hostile = `${'!'.repeat(50_000)}\n`
+
+    const started = Date.now()
+    expect(() => new Constraint(hostile)).toThrow(InvalidConstraint)
+    expect(Date.now() - started).toBeLessThan(1000)
+  })
+
+  it('rejects a long pre-release promptly', () => {
+    const hostile = `1.0.0-${'a'.repeat(50_000)}\n`
+
+    const started = Date.now()
+    // Whether this parses is not the point; that it returns quickly is.
+    try {
+      new Constraint(hostile)
+    } catch {
+      // fine either way
+    }
+    expect(Date.now() - started).toBeLessThan(1000)
   })
 })

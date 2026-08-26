@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, readFileSync, statSync, writeFileSync } from 'fs'
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, statSync, writeFileSync } from 'fs'
 import { tmpdir } from 'os'
 import { join } from 'path'
 import {
@@ -8,7 +8,12 @@ import {
   renderTerraformrc,
   writeCredentials,
 } from '../src/setup/credentials.js'
-import { TfVarsError, autoTfVarsName, writeAutoTfVars } from '../src/setup/tfvars.js'
+import {
+  TfVarsError,
+  autoTfVarsName,
+  deleteAutoTfVars,
+  writeAutoTfVars,
+} from '../src/setup/tfvars.js'
 
 function scratch(): string {
   return mkdtempSync(join(tmpdir(), 'setup-'))
@@ -222,5 +227,59 @@ describe('writing auto tfvars', () => {
   it('creates nothing when neither input is given', () => {
     const module = scratch()
     expect(writeAutoTfVars({}, module, module).created).toEqual([])
+  })
+})
+
+describe('cleaning up generated tfvars', () => {
+  function moduleWith(names: string[]): string {
+    const dir = mkdtempSync(join(tmpdir(), 'cleanup-'))
+    for (const name of names) writeFileSync(join(dir, name), '')
+    return dir
+  }
+
+  it('removes the files it generated', () => {
+    const module = moduleWith(['zzzz-dflook-terraform-github-actions-00.auto.tfvars'])
+    expect(deleteAutoTfVars(module)).toEqual([
+      'zzzz-dflook-terraform-github-actions-00.auto.tfvars',
+    ])
+    expect(existsSync(join(module, 'zzzz-dflook-terraform-github-actions-00.auto.tfvars'))).toBe(
+      false
+    )
+  })
+
+  it('removes the json form too', () => {
+    const module = moduleWith(['zzzz-dflook-terraform-github-actions-01.x.auto.tfvars.json'])
+    expect(deleteAutoTfVars(module)).toHaveLength(1)
+  })
+
+  /** The user's own files are not ours to delete. */
+  it('leaves other tfvars alone', () => {
+    const module = moduleWith(['production.auto.tfvars', 'terraform.tfvars', 'main.tf'])
+    expect(deleteAutoTfVars(module)).toEqual([])
+    expect(existsSync(join(module, 'production.auto.tfvars'))).toBe(true)
+    expect(existsSync(join(module, 'terraform.tfvars'))).toBe(true)
+  })
+
+  /**
+   * A cancelled run leaves files behind, and Terraform would load them on the
+   * next run as though they had been asked for.
+   */
+  it('removes leftovers from an earlier run', () => {
+    const module = moduleWith([
+      'zzzz-dflook-terraform-github-actions-00.stale.auto.tfvars',
+      'zzzz-dflook-terraform-github-actions-07.older.auto.tfvars',
+    ])
+    expect(deleteAutoTfVars(module).sort()).toHaveLength(2)
+  })
+
+  it('does nothing when the module is gone', () => {
+    expect(deleteAutoTfVars(join(tmpdir(), 'definitely-absent-module'))).toEqual([])
+  })
+
+  it('round-trips with what was written', () => {
+    const module = mkdtempSync(join(tmpdir(), 'roundtrip-'))
+    const { created } = writeAutoTfVars({ variables: 'a = 1' }, module, module)
+    expect(created).toHaveLength(1)
+    expect(deleteAutoTfVars(module)).toEqual(created)
   })
 })

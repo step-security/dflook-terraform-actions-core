@@ -1,4 +1,4 @@
-import { copyFileSync, existsSync, statSync, writeFileSync } from 'fs'
+import { copyFileSync, existsSync, readdirSync, rmSync, statSync, writeFileSync } from 'fs'
 import { basename, join } from 'path'
 
 /**
@@ -101,4 +101,37 @@ export function writeAutoTfVars(
   }
 
   return { created }
+}
+
+/**
+ * Matches any generated file, including ones this run did not create.
+ *
+ * Deliberately not limited to the names just written: a run that was cancelled
+ * mid-step leaves files behind, and those would be loaded by the next run as if
+ * they had been asked for.
+ */
+const GENERATED = new RegExp(`^${PREFIX}-\\d+.*\\.auto\\.tfvars(\\.json)?$`)
+
+/**
+ * Removes the generated tfvars files from the module.
+ *
+ * These sit inside the checkout, so leaving them behind would change what a
+ * later step in the same job sees, and could put variable values into an
+ * uploaded artifact. Must run whether or not the command succeeded.
+ */
+export function deleteAutoTfVars(modulePath: string): string[] {
+  if (!existsSync(modulePath)) return []
+
+  const removed: string[] = []
+  for (const entry of readdirSync(modulePath)) {
+    if (!GENERATED.test(entry)) continue
+    try {
+      rmSync(join(modulePath, entry), { force: true })
+      removed.push(entry)
+    } catch {
+      // Cleanup runs on the way out, including after a failure. Losing the
+      // original error to report a cleanup problem would hide the real cause.
+    }
+  }
+  return removed
 }

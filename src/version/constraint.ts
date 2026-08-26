@@ -18,8 +18,14 @@ import { Version, compareVersions } from './version.js'
 
 export type ConstraintOperator = '=' | '!=' | '>' | '>=' | '<' | '<=' | '~>'
 
-const OPERATOR_AND_REST = /^([=!<>~]*)(.*)$/
-const PARTIAL_VERSION = /^v?(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:-(.*))?$/
+// `[\s\S]` rather than `.` on purpose. `.` does not match a newline, so on an
+// input containing one the engine backtracks through every split of the
+// preceding group looking for a match that cannot exist — quadratic in the
+// length of the input. Whitespace is stripped before these are applied, so it is
+// not reachable today, but that is a property of the caller rather than of the
+// pattern, and it is not worth depending on.
+const OPERATOR_AND_REST = /^([=!<>~]*)([\s\S]*)$/
+const PARTIAL_VERSION = /^v?(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:-([\s\S]*))?$/
 
 /** Ordering used when constraints are sorted, mirroring upstream. */
 const OPERATOR_ORDER: ConstraintOperator[] = ['<', '<=', '=', '~>', '>=', '>']

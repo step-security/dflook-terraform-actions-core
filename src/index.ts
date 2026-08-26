@@ -70,6 +70,37 @@ export {
 } from './terraform/module.js'
 export type { TerraformModule } from './terraform/module.js'
 
+// Running the tool
+export { runTool, splitList } from './terraform/exec.js'
+export type { RunOptions, RunResult } from './terraform/exec.js'
+export {
+  InitError,
+  backendConfigArgs,
+  initBackendWorkspace,
+  selectWorkspace,
+} from './terraform/init.js'
+export type { BackendConfigInputs, InitOptions, InitResult } from './terraform/init.js'
+export {
+  PLAN_CHANGES,
+  PLAN_ERROR,
+  PLAN_NO_CHANGES,
+  PlanArgsError,
+  cannotSavePlan,
+  planArgs,
+  runPlan,
+} from './terraform/plan.js'
+export type { PlanArgsInputs, PlanOptions, PlanResult } from './terraform/plan.js'
+
+// Redacting sensitive values from output
+export {
+  DEFAULT_RESOURCES_PATTERN,
+  DEFAULT_VALUES_PATTERN,
+  Masker,
+  maskOptionsFromEnv,
+  maskOutput,
+} from './terraform/mask.js'
+export type { MaskOptions } from './terraform/mask.js'
+
 // Preparing the environment
 export {
   formatCloudTokens,
@@ -84,7 +115,12 @@ export type {
   WrittenCredentials,
 } from './setup/credentials.js'
 
-export { TfVarsError, autoTfVarsName, writeAutoTfVars } from './setup/tfvars.js'
+export {
+  TfVarsError,
+  autoTfVarsName,
+  deleteAutoTfVars,
+  writeAutoTfVars,
+} from './setup/tfvars.js'
 export type { TfVarsInputs, WrittenTfVars } from './setup/tfvars.js'
 
 export { PreRunError, runPreRunCommands } from './setup/pre-run.js'

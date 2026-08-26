@@ -1,0 +1,23 @@
+Terraform will perform the following actions:
+
+  # random_id.some_id will be created
+  + resource "random_id" "some_id" {
+      + b64_std     = (known after apply)
+      + byte_length = 8
+      + hex         = (known after apply)
+      + id          = (known after apply)
+      ~ result      = "***" -> (known after apply)
+    }
+
+  # aws_db_instance.main will be updated in-place
+  ~ resource "aws_db_instance" "main" {
+      ~ password        = "*******" -> (***********)
+      ~ name            = "olddb" -> ("newdb")
+      ~ oauth_token     = "***" -> (known after apply)
+        secret_key      = "**************"
+        plain_name      = "visible"
+        api_key         = "**********"
+        DontObfuscate   = "keepme"
+    }
+
+Plan: 1 to add, 1 to change, 0 to destroy.
