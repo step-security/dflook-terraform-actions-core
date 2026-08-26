@@ -166,3 +166,12 @@ export {
   removeUnchangedAttributes,
   removeWarnings,
 } from './comment/hash.js'
+export {
+  collapseThreshold,
+  formatHeaders,
+  matchingHeaders,
+  parseComment,
+  parseHeaders,
+  renderComment,
+} from './comment/comment.js'
+export type { CommentHeaders, ParsedComment, RenderOptions } from './comment/comment.js'
