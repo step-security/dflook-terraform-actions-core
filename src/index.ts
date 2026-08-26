@@ -156,3 +156,13 @@ export {
   warning,
   withWorkflowCommandsStopped,
 } from './actions/workflow.js'
+// Deciding whether a plan was approved
+export {
+  commentHash,
+  normalisePlan,
+  planHash,
+  planOutHash,
+  planTextMatches,
+  removeUnchangedAttributes,
+  removeWarnings,
+} from './comment/hash.js'

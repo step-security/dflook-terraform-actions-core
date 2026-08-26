@@ -1,0 +1,35 @@
+{
+  "salt": "https://api.github.com/repos/o/r/issues/1",
+  "cases": [
+    {
+      "name": "simple",
+      "plan": "Plan: 1 to add, 0 to change, 0 to destroy.",
+      "hash": "3d878e19bf6c341bca04a7364b3d74f03f8bcbf1f31bb77c983e6b86b3da3e45"
+    },
+    {
+      "name": "unchanged",
+      "plan": "  ~ resource \"a\" \"b\" {\n      # (3 unchanged attributes hidden)\n    }\nPlan: 0 to add, 1 to change, 0 to destroy.",
+      "hash": "2643e89a1eb94ed68dd5362d4e9613439500c732617672830d2e651fe9856c30"
+    },
+    {
+      "name": "warned",
+      "plan": "Plan: 1 to add, 0 to change, 0 to destroy.\nWarning: deprecated argument\n╷\n│ detail",
+      "hash": "3d878e19bf6c341bca04a7364b3d74f03f8bcbf1f31bb77c983e6b86b3da3e45"
+    },
+    {
+      "name": "prewarn",
+      "plan": "Warning: reviewed\nPlan: 1 to add, 0 to change, 0 to destroy.",
+      "hash": "7113e4e8dee88016897edb8c210136f2ec75c07af7ca0656e05f22d1bba5def6"
+    },
+    {
+      "name": "unicode",
+      "plan": "  + name = \"café-✓\"\nPlan: 1 to add, 0 to change, 0 to destroy.",
+      "hash": "3e25a332d835dfbddab5fd2f65f7a877f51144dbf98eafb7630986d7d4a3b527"
+    },
+    {
+      "name": "padded",
+      "plan": "\n\n  Plan: 2 to add, 0 to change, 1 to destroy.  \n\n",
+      "hash": "61f67a5f2ecdbfeefa7364e24c86576a2b9539046a8b813a18131420bb67478b"
+    }
+  ]
+}
