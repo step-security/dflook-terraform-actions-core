@@ -1,5 +1,3 @@
-[![StepSecurity Maintained Action](https://raw.githubusercontent.com/step-security/maintained-actions-assets/main/assets/maintained-action-banner.png)](https://docs.stepsecurity.io/actions/stepsecurity-maintained-actions)
-
 # dflook-terraform-actions-core
 
 Shared implementation behind the StepSecurity maintained replacements for the
