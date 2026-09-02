@@ -234,3 +234,12 @@ export {
   readCliCredentials,
 } from './comment/terraform-cloud.js'
 export type { CloudClientOptions, FetchJsonPlanOptions } from './comment/terraform-cloud.js'
+export { initWithoutBackend } from './terraform/init.js'
+export {
+  ValidateReportError,
+  formatAnnotation,
+  isValid,
+  parseValidateReport,
+  validateAnnotations,
+} from './terraform/validate.js'
+export type { Annotation, Diagnostic, ValidateReport } from './terraform/validate.js'
