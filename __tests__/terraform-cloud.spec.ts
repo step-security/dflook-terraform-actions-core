@@ -194,3 +194,42 @@ describe('the best-effort wrapper', () => {
     expect(seen[0]).toBe('Bearer explicit')
   })
 })
+/**
+ * The config path is read from disk, so its size is not bounded by anything we
+ * control. Scanning lines keeps this linear.
+ */
+describe('parsing cost', () => {
+  it('handles a large file promptly', () => {
+    const hostile = 'credentials "!"{{|'.repeat(20_000)
+    const started = Date.now()
+    readCliCredentials(hostile)
+    expect(Date.now() - started).toBeLessThan(1000)
+  })
+
+  it('handles a long single line promptly', () => {
+    const started = Date.now()
+    readCliCredentials(`credentials "${'a'.repeat(80_000)}`)
+    expect(Date.now() - started).toBeLessThan(1000)
+  })
+
+  it('still reads a token after other attributes', () => {
+    const config = [
+      'credentials "app.terraform.io" {',
+      '  # a comment',
+      '  token = "abc"',
+      '}',
+    ].join('\n')
+    expect(readCliCredentials(config)).toEqual({ 'app.terraform.io': 'abc' })
+  })
+
+  it('does not leak a token across blocks', () => {
+    const config = [
+      'credentials "a.example" {',
+      '}',
+      'credentials "b.example" {',
+      '  token = "only-b"',
+      '}',
+    ].join('\n')
+    expect(readCliCredentials(config)).toEqual({ 'b.example': 'only-b' })
+  })
+})

@@ -150,3 +150,17 @@ describe('syntax highlighting', () => {
     expect(planHighlighting('text', false)).toBe('')
   })
 })
+/**
+ * Plan text is arbitrarily long, so these must not depend on output size.
+ */
+describe('formatting cost', () => {
+  it.each([
+    ['a long run of spaces', ' '.repeat(80_000)],
+    ['a long run of digits', `Plan: ${'9'.repeat(80_000)}`],
+    ['many near-miss comment lines', '      # (unchanged\n'.repeat(20_000)],
+  ])('handles %s promptly', (_label, input) => {
+    const started = Date.now()
+    formatDiff(input)
+    expect(Date.now() - started).toBeLessThan(1000)
+  })
+})

@@ -122,3 +122,18 @@ describe('the collapsed summary line', () => {
     })
   })
 })
+describe('parsing cost', () => {
+  it('handles a long run of digits promptly', () => {
+    const started = Date.now()
+    planCounts(`Plan: ${'9'.repeat(80_000)}`)
+    expect(Date.now() - started).toBeLessThan(1000)
+  })
+
+  it('still reads realistic counts', () => {
+    expect(planCounts('Plan: 12 to add, 345 to change, 6789 to destroy.')).toMatchObject({
+      add: 12,
+      change: 345,
+      destroy: 6789,
+    })
+  })
+})

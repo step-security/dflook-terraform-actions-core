@@ -70,7 +70,9 @@ export function formatDiff(planText: string): string {
     if (replaced.startsWith('~ ')) replaced = `!~${replaced.slice(2)}`
 
     // Same treatment for the "N unchanged attributes hidden" comments.
-    replaced = replaced.replace(/(\s+)# (\(.*hidden)/, '#$1$2')
+    // Anchored: unanchored, a long run of spaces with no `# ` retries the
+    // match from every position. Terraform always indents this at line start.
+    replaced = replaced.replace(/^(\s+)# (\(.*hidden)/, '#$1$2')
 
     lines.push(replaced)
   }

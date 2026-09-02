@@ -30,19 +30,38 @@ export class CloudError extends Error {}
  * }
  * ```
  *
- * Parsed with a pattern rather than an HCL parser. This file is written by
- * `writeCredentials` from the action's own inputs, or by `terraform login`, so
- * its shape is known — and pulling in a parser to read one nested attribute is
- * not worth it.
+ * Read line by line rather than with one pattern over the whole file. A single
+ * global pattern spanning blocks has to rescan from every position when it fails
+ * to match, which is quadratic in the file size. Scanning lines is linear and,
+ * as it turns out, easier to follow.
+ *
+ * Not a general HCL parser. This file is written by `writeCredentials` from the
+ * action's own inputs, or by `terraform login`, so its shape is known — and
+ * pulling in a parser to read one nested attribute is not worth it.
  */
 export function readCliCredentials(config: string): Record<string, string> {
   const hosts: Record<string, string> = {}
 
-  const block = /credentials\s+"([^"]+)"\s*\{([^}]*)\}/g
-  for (const match of config.matchAll(block)) {
-    const host = match[1]
-    const token = /token\s*=\s*"([^"]*)"/.exec(match[2])
-    if (token) hosts[host] = token[1]
+  const opening = /^\s*credentials\s+"([^"]{1,253})"\s*\{/
+  const token = /^\s*token\s*=\s*"([^"]*)"/
+
+  let host: string | undefined
+
+  for (const line of config.split('\n')) {
+    if (host === undefined) {
+      const match = opening.exec(line)
+      if (match) host = match[1]
+      continue
+    }
+
+    // Inside a block: take the token, and stop at the closing brace.
+    const value = token.exec(line)
+    if (value) {
+      hosts[host] = value[1]
+      continue
+    }
+
+    if (line.includes('}')) host = undefined
   }
 
   return hosts

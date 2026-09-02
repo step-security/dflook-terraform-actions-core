@@ -21,8 +21,14 @@ export interface PlanCounts {
 /** `  # module.a.thing has moved to module.b.thing` */
 const MOVED = /^ {2}# \S+ has moved to \S+$/
 
-/** The `N to <operation>` pairs inside a `Plan:` line. */
-const OPERATION = /(\d+) to (\w+)/g
+/**
+ * The `N to <operation>` pairs inside a `Plan:` line.
+ *
+ * The digit run is bounded. Unbounded, a long run of digits with no ` to `
+ * following makes the global scan retry from every position, which is quadratic.
+ * No real resource count approaches ten digits.
+ */
+const OPERATION = /(\d{1,10}) to (\w{1,20})/g
 
 /**
  * Counts the operations a plan will perform.
