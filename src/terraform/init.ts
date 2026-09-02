@@ -175,3 +175,42 @@ export async function selectWorkspace(options: InitOptions): Promise<InitResult>
 
   return { tfWorkspace }
 }
+
+/**
+ * Initializes without configuring a backend.
+ *
+ * Enough to install modules and providers so a validate can resolve references,
+ * without touching remote state. That matters for validation specifically: it
+ * needs the providers present to check attribute names, but it has no business
+ * reading or locking state.
+ *
+ * Backend config arguments are deliberately not passed. With `-backend=false`
+ * they have no effect, and upstream does not pass them here either.
+ *
+ * Failure is reported rather than thrown. A configuration broken enough that
+ * init fails is exactly the case validation should go on to describe, and
+ * throwing here would replace a useful diagnostic with a generic init error.
+ */
+export async function initWithoutBackend(options: {
+  binary: string
+  modulePath: string
+  dataDir: string
+  env?: NodeJS.ProcessEnv
+}): Promise<{ exitCode: number; stderr: string }> {
+  core.startGroup('Initializing Terraform')
+  try {
+    rmSync(options.dataDir, { recursive: true, force: true })
+
+    const result = await runTool(
+      options.binary,
+      ['init', '-input=false', '-backend=false'],
+      { cwd: options.modulePath, env: options.env, silent: false }
+    )
+
+    if (result.stderr.trim()) core.info(result.stderr.trimEnd())
+
+    return { exitCode: result.exitCode, stderr: result.stderr }
+  } finally {
+    core.endGroup()
+  }
+}
