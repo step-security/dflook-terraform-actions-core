@@ -162,6 +162,43 @@ export class GitHubClient {
     }
   }
 
+  /**
+   * Collapses a comment in the GitHub interface.
+   *
+   * Best effort, deliberately. This is cosmetic: it stops a long-running pull
+   * request accumulating expanded outdated plans. What actually makes a
+   * superseded comment stop counting is the `closed` header set on it over REST,
+   * so failing here changes nothing about which plan can approve an apply.
+   *
+   * Only reachable through GraphQL, which not every token can use, hence
+   * swallowing the failure rather than reporting it.
+   */
+  async minimizeComment(nodeId: string | undefined, classifier = 'OUTDATED'): Promise<boolean> {
+    if (!nodeId) return false
+
+    try {
+      const response = await this.fetchImpl(this.graphqlUrl, {
+        method: 'POST',
+        headers: this.headers(),
+        body: JSON.stringify({
+          query:
+            'mutation($input: MinimizeCommentInput!) { minimizeComment(input: $input) { clientMutationId } }',
+          variables: { input: { subjectId: nodeId, classifier } },
+        }),
+        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+      })
+
+      if (!response.ok) return false
+
+      // GraphQL reports errors in the body with a 200, so an ok status alone is
+      // not success.
+      const body = (await response.json()) as { errors?: unknown[] }
+      return !body.errors?.length
+    } catch {
+      return false
+    }
+  }
+
   async getPullRequest(url: string): Promise<PullRequest> {
     return this.request<PullRequest>(url)
   }

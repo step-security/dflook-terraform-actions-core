@@ -212,3 +212,25 @@ export type {
   UpdateOptions,
 } from './comment/plan-comment.js'
 export { getRemoteRunId, isRemoteExecution } from './terraform/run-id.js'
+
+// Planning
+export { planCounts, planSummaryLine } from './terraform/plan-summary.js'
+export type { PlanCounts } from './terraform/plan-summary.js'
+export {
+  formatDiff,
+  formatPlanText,
+  planHighlighting,
+  truncate,
+} from './comment/plan-formatting.js'
+export type { PlanTextFormat } from './comment/plan-formatting.js'
+export { commentRequested, postPlanComment } from './comment/plan-comment.js'
+export type { CommentMode, PostPlanOptions } from './comment/plan-comment.js'
+export {
+  CloudError,
+  DEFAULT_CLOUD_HOST,
+  TerraformCloudClient,
+  fetchCloudJsonPlan,
+  getCliCredentials,
+  readCliCredentials,
+} from './comment/terraform-cloud.js'
+export type { CloudClientOptions, FetchJsonPlanOptions } from './comment/terraform-cloud.js'

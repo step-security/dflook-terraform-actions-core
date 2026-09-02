@@ -111,6 +111,8 @@ export interface FoundComment {
   comment: ParsedComment
   /** API url of the comment, for updating it in place. */
   url: string
+  /** GraphQL node id, needed to collapse the comment. Absent on older payloads. */
+  nodeId?: string
 }
 
 /**
@@ -135,7 +137,7 @@ export async function findPlanComment(
     if (!parsed) continue
     if (!matchingHeaders(parsed, headers)) continue
 
-    return { comment: parsed, url: raw.url }
+    return { comment: parsed, url: raw.url, nodeId: raw.node_id }
   }
 
   return undefined
@@ -212,4 +214,122 @@ export async function writePlanComment(options: UpdateOptions): Promise<void> {
   }
 
   await options.client.createComment(options.issueUrl, body)
+}
+
+/** How `add_github_comment` was set. */
+export type CommentMode = 'true' | 'changes-only' | 'always-new' | 'false'
+
+/** True when the mode asks for a comment at all. */
+export function commentRequested(mode: string | undefined): boolean {
+  return mode === 'true' || mode === 'changes-only' || mode === 'always-new'
+}
+
+export interface PostPlanOptions {
+  client: GitHubClient
+  issueUrl: string
+  mode: CommentMode
+  /** Headers identifying this configuration, from `planCommentHeaders`. */
+  headers: Record<string, string | undefined>
+  /** Existing comment for this configuration, if there is one. */
+  existing?: FoundComment
+  /** Text above the collapsible section, naming the configuration. */
+  description: string
+  /** Plan text as Terraform produced it. Hashed, and shown after formatting. */
+  planText: string
+  /** Body to display, already formatted. */
+  body: string
+  /** Format tag recorded in the header. */
+  bodyFormat: string
+  bodyHighlighting: string
+  summary: string
+  status: string
+  /** Whether the plan has changes, which decides some of the above. */
+  changes: boolean
+  /** Saved plan file, hashed so an apply can verify the binary plan. */
+  planOut?: string
+  /** Reference to the job that produced this, recorded for traceability. */
+  planJobRef?: string
+}
+
+/**
+ * Posts or updates the plan comment.
+ *
+ * The recorded hashes are what an apply later checks against, so this is the
+ * write half of the approval mechanism. Three behaviours the mode selects:
+ *
+ * - `true` — keep one comment per configuration, edited in place.
+ * - `changes-only` — the same, except a plan with no changes will update an
+ *   existing comment but never create one. A pull request that never had a plan
+ *   does not get a comment just to say nothing is happening.
+ * - `always-new` — supersede the previous comment and post a replacement, so the
+ *   newest plan is the newest comment.
+ */
+export async function postPlanComment(options: PostPlanOptions): Promise<void> {
+  let existing = options.existing
+
+  // A no-change plan under changes-only updates an existing comment but does
+  // not create one.
+  const onlyIfExists = options.mode === 'changes-only' && !options.changes
+  if (!existing && onlyIfExists) return
+
+  if (options.mode === 'always-new' && existing) {
+    await supersede(options.client, existing)
+    existing = undefined
+  }
+
+  const headers: Record<string, string> = {}
+  for (const [key, value] of Object.entries(options.headers)) {
+    if (value !== undefined) headers[key] = value
+  }
+
+  if (options.planJobRef) headers.plan_job_ref = options.planJobRef
+
+  // Hash the plan as Terraform produced it, not as displayed. Formatting and
+  // truncation are presentation, and hashing the displayed form would make a
+  // truncated plan unapprovable.
+  headers.plan_hash = planHash(options.planText, options.issueUrl)
+  headers.plan_text_format = options.bodyFormat
+
+  if (options.planOut) {
+    headers.plan_out_hash = planOutHash(options.planOut, options.issueUrl)
+  } else {
+    // A stale hash would authorise applying a plan file this run never made.
+    delete headers.plan_out_hash
+  }
+
+  await writePlanComment({
+    client: options.client,
+    issueUrl: options.issueUrl,
+    headers,
+    description: options.description,
+    summary: options.summary,
+    body: options.body,
+    bodyHighlighting: options.bodyHighlighting,
+    status: options.status,
+    existing,
+  })
+}
+
+/**
+ * Marks a comment as superseded.
+ *
+ * The `closed` header is what matters: an apply requires it to be absent, so
+ * setting it stops this comment approving anything. Striking the summary and
+ * collapsing the comment are presentation, and the collapse is best effort
+ * because it needs GraphQL, which not every token can use.
+ */
+async function supersede(client: GitHubClient, existing: FoundComment): Promise<void> {
+  await writePlanComment({
+    client,
+    issueUrl: existing.comment.headers.issue_url ?? '',
+    headers: { ...existing.comment.headers, closed: 'true' } as CommentHeaders,
+    description: existing.comment.description,
+    summary: `<strike>${existing.comment.summary}</strike>`,
+    body: existing.comment.body,
+    bodyHighlighting: existing.comment.bodyHighlighting,
+    status: ':spider_web: Plan is outdated',
+    existing,
+  })
+
+  await client.minimizeComment(existing.nodeId)
 }
