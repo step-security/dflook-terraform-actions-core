@@ -70,3 +70,28 @@ describe('reading who holds the lock', () => {
     expect(getLockInfo(output)).toEqual({ ID: 'real' })
   })
 })
+
+/**
+ * The field pattern must stay linear. Terraform's error output is arbitrary
+ * text, and a line with no colon would otherwise make the engine try every
+ * split between the leading whitespace and the field name.
+ */
+describe('parsing cost', () => {
+  it('handles a long run of spaces promptly', () => {
+    const stderr = `Error: Error acquiring the state lock\nLock Info:\n${' '.repeat(60_000)}`
+    const started = Date.now()
+    getLockInfo(stderr)
+    expect(Date.now() - started).toBeLessThan(1000)
+  })
+
+  it('still reads a normal field', () => {
+    const stderr = 'Error: Error acquiring the state lock\nLock Info:\n  ID:        abc-123\n'
+    expect(getLockInfo(stderr)).toEqual({ ID: 'abc-123' })
+  })
+
+  it('keeps a value containing colons', () => {
+    const stderr =
+      'Error: Error acquiring the state lock\nLock Info:\n  Created:   2026-08-26 10:11:12 UTC\n'
+    expect(getLockInfo(stderr)?.Created).toBe('2026-08-26 10:11:12 UTC')
+  })
+})

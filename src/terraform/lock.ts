@@ -13,7 +13,11 @@ export type LockInfo = Record<string, string>
 
 const LOCK_FAILED = 'Error acquiring the state lock'
 const LOCK_INFO_HEADING = 'Lock Info:'
-const FIELD = /^\s+(?<field>.*?):\s+(?<value>.*)/
+// The field cannot start with whitespace or contain a colon. Written that way
+// on purpose: with a lazy `.*?` the leading `\s+` and the field group both match
+// spaces, so the engine tries every split between them on a line that has no
+// colon, which is quadratic in the line length.
+const FIELD = /^\s+(?<field>[^\s:][^:]*):\s+(?<value>.*)/
 
 /**
  * Extracts the lock details from a command's stderr.

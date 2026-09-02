@@ -11,6 +11,27 @@ import { readFileSync, existsSync } from 'fs'
  * before it is requested, because some events carry attacker-influenced content.
  */
 
+/**
+ * A `rel="next"` entry in a Link header.
+ *
+ * Anchored deliberately. Unanchored, an input of many `<` with no `>` makes the
+ * engine rescan from every position, which is quadratic. A Link header part
+ * always begins with `<` once trimmed, so the anchor costs nothing.
+ */
+const NEXT_LINK = /^<([^>]+)>\s*;\s*rel="next"/
+
+/**
+ * Removes trailing slashes without backtracking.
+ *
+ * `replace(/\/+$/, '')` is quadratic on a string of many slashes, since the
+ * engine retries the anchored match from each position.
+ */
+function stripTrailingSlashes(url: string): string {
+  let end = url.length
+  while (end > 0 && url[end - 1] === '/') end -= 1
+  return url.slice(0, end)
+}
+
 export class GitHubError extends Error {}
 
 /** Raised for conditions that should be reported as a workflow error. */
@@ -52,7 +73,7 @@ export class GitHubClient {
 
   constructor(options: GitHubClientOptions) {
     this.token = options.token
-    this.apiUrl = (options.apiUrl ?? 'https://api.github.com').replace(/\/+$/, '')
+    this.apiUrl = stripTrailingSlashes(options.apiUrl ?? 'https://api.github.com')
     this.graphqlUrl = options.graphqlUrl ?? `${this.apiUrl}/graphql`
     this.fetchImpl = options.fetchImpl ?? fetch
   }
@@ -227,7 +248,7 @@ export function nextLink(header: string | null): string | undefined {
   if (!header) return undefined
 
   for (const part of header.split(',')) {
-    const match = /<([^>]+)>\s*;\s*rel="next"/.exec(part.trim())
+    const match = NEXT_LINK.exec(part.trim())
     if (match) return match[1]
   }
   return undefined

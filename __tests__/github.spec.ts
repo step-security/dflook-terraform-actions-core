@@ -230,3 +230,34 @@ describe('identifying the token user', () => {
     await expect(github.currentUser()).resolves.toBe('github-actions[bot]')
   })
 })
+
+/**
+ * Both of these take values that can be arbitrarily long: an API url from
+ * configuration, and a Link header from a response.
+ */
+describe('parsing cost', () => {
+  it('strips trailing slashes promptly', () => {
+    const started = Date.now()
+    const github = new GitHubClient({ token: 't', apiUrl: `https://h${'/'.repeat(80_000)}` })
+    expect(github.apiUrl).toBe('https://h')
+    expect(Date.now() - started).toBeLessThan(1000)
+  })
+
+  it('reads a link header promptly when it nearly matches', () => {
+    const started = Date.now()
+    expect(nextLink('<'.repeat(80_000))).toBeUndefined()
+    expect(Date.now() - started).toBeLessThan(1000)
+  })
+
+  it('still strips a single trailing slash', () => {
+    expect(new GitHubClient({ token: 't', apiUrl: 'https://api.github.com/' }).apiUrl).toBe(
+      'https://api.github.com'
+    )
+  })
+
+  it('leaves a url with no trailing slash alone', () => {
+    expect(new GitHubClient({ token: 't', apiUrl: 'https://api.github.com' }).apiUrl).toBe(
+      'https://api.github.com'
+    )
+  })
+})
