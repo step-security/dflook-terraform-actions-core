@@ -1,0 +1,30 @@
+Terraform will perform the following actions:
+
+  # aws_instance.web will be created
++   resource "aws_instance" "web" {
++       ami           = "ami-123"
++       instance_type = "t3.micro"
+!~      tags          = {
+-           "old" = "value" -> null
++           "new" = "value"
+        }
+#      (3 unchanged attributes hidden)
+    }
+
+  # aws_instance.old has moved to aws_instance.new
+!~  resource "null_resource" "a" {
+!~      triggers = {
+!~          script = <<-EOT
+              #!/bin/bash
+              - this is inside a heredoc
+              + so must not be rewritten
+                  ~ nor this
+            EOT
+        }
+    }
+
+-   resource "aws_s3_bucket" "gone" {
+-       bucket = "old-bucket" -> null
+    }
+
+Plan: 1 to add, 1 to change, 1 to destroy.

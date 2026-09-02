@@ -11,6 +11,27 @@ import { readFileSync, existsSync } from 'fs'
  * before it is requested, because some events carry attacker-influenced content.
  */
 
+/**
+ * A `rel="next"` entry in a Link header.
+ *
+ * Anchored deliberately. Unanchored, an input of many `<` with no `>` makes the
+ * engine rescan from every position, which is quadratic. A Link header part
+ * always begins with `<` once trimmed, so the anchor costs nothing.
+ */
+const NEXT_LINK = /^<([^>]+)>\s*;\s*rel="next"/
+
+/**
+ * Removes trailing slashes without backtracking.
+ *
+ * `replace(/\/+$/, '')` is quadratic on a string of many slashes, since the
+ * engine retries the anchored match from each position.
+ */
+function stripTrailingSlashes(url: string): string {
+  let end = url.length
+  while (end > 0 && url[end - 1] === '/') end -= 1
+  return url.slice(0, end)
+}
+
 export class GitHubError extends Error {}
 
 /** Raised for conditions that should be reported as a workflow error. */
@@ -52,7 +73,7 @@ export class GitHubClient {
 
   constructor(options: GitHubClientOptions) {
     this.token = options.token
-    this.apiUrl = (options.apiUrl ?? 'https://api.github.com').replace(/\/+$/, '')
+    this.apiUrl = stripTrailingSlashes(options.apiUrl ?? 'https://api.github.com')
     this.graphqlUrl = options.graphqlUrl ?? `${this.apiUrl}/graphql`
     this.fetchImpl = options.fetchImpl ?? fetch
   }
@@ -162,6 +183,43 @@ export class GitHubClient {
     }
   }
 
+  /**
+   * Collapses a comment in the GitHub interface.
+   *
+   * Best effort, deliberately. This is cosmetic: it stops a long-running pull
+   * request accumulating expanded outdated plans. What actually makes a
+   * superseded comment stop counting is the `closed` header set on it over REST,
+   * so failing here changes nothing about which plan can approve an apply.
+   *
+   * Only reachable through GraphQL, which not every token can use, hence
+   * swallowing the failure rather than reporting it.
+   */
+  async minimizeComment(nodeId: string | undefined, classifier = 'OUTDATED'): Promise<boolean> {
+    if (!nodeId) return false
+
+    try {
+      const response = await this.fetchImpl(this.graphqlUrl, {
+        method: 'POST',
+        headers: this.headers(),
+        body: JSON.stringify({
+          query:
+            'mutation($input: MinimizeCommentInput!) { minimizeComment(input: $input) { clientMutationId } }',
+          variables: { input: { subjectId: nodeId, classifier } },
+        }),
+        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+      })
+
+      if (!response.ok) return false
+
+      // GraphQL reports errors in the body with a 200, so an ok status alone is
+      // not success.
+      const body = (await response.json()) as { errors?: unknown[] }
+      return !body.errors?.length
+    } catch {
+      return false
+    }
+  }
+
   async getPullRequest(url: string): Promise<PullRequest> {
     return this.request<PullRequest>(url)
   }
@@ -190,7 +248,7 @@ export function nextLink(header: string | null): string | undefined {
   if (!header) return undefined
 
   for (const part of header.split(',')) {
-    const match = /<([^>]+)>\s*;\s*rel="next"/.exec(part.trim())
+    const match = NEXT_LINK.exec(part.trim())
     if (match) return match[1]
   }
   return undefined
