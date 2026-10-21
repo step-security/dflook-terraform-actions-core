@@ -54,7 +54,7 @@ describe('comment handling', () => {
    * deploy actions, where state is read from.
    */
   it('ignores a backend inside a line comment', () => {
-    const module = { body: '', files: [] }
+    const module = { body: '', files: [], json: [] }
     const withComment = {
       ...module,
       body: require('../src/terraform/module').stripComments(
@@ -67,7 +67,7 @@ describe('comment handling', () => {
   it('ignores a backend inside a block comment', () => {
     const { stripComments } = require('../src/terraform/module')
     const body = stripComments('terraform {\n/* backend "s3" {} */\n  backend "local" {}\n}\n')
-    expect(getBackendType({ body, files: [] })).toBe('local')
+    expect(getBackendType({ body, files: [], json: [] })).toBe('local')
   })
 
   it('does not treat a # inside a string as a comment', () => {

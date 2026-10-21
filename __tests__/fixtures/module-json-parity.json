@@ -1,0 +1,442 @@
+{
+  "note": "Recorded by running upstream terraform-github-actions v3.1.0 image/src/terraform/module.py over each case directory. Regenerate with __tests__/fixtures/README-tf-json-parity.md",
+  "cases": [
+    {
+      "name": "json-only",
+      "files": {
+        "main.tf.json": "{\"terraform\": {\"required_version\": \">= 1.5\", \"backend\": {\"s3\": {\"bucket\": \"b\", \"key\": \"k\"}}}, \"variable\": {\"api_token\": {\"type\": \"string\", \"sensitive\": true}}}"
+      },
+      "upstream": {
+        "tf": {
+          "backendType": "s3",
+          "files": [
+            "main.tf.json"
+          ],
+          "sensitive": [
+            "api_token"
+          ],
+          "version": [
+            ">=1.5"
+          ]
+        },
+        "tofu": {
+          "backendType": "s3",
+          "files": [
+            "main.tf.json"
+          ],
+          "sensitive": [
+            "api_token"
+          ],
+          "version": [
+            ">=1.5"
+          ]
+        }
+      }
+    },
+    {
+      "name": "hcl-only",
+      "files": {
+        "main.tf": "terraform {\n  required_version = \">= 1.5\"\n  backend \"s3\" {\n    bucket = \"b\"\n    key = \"k\"\n  }\n}\n\nvariable \"api_token\" {\n  type = string\n  sensitive = true\n}\n"
+      },
+      "upstream": {
+        "tf": {
+          "backendType": "s3",
+          "files": [
+            "main.tf"
+          ],
+          "sensitive": [
+            "api_token"
+          ],
+          "version": [
+            ">=1.5"
+          ]
+        },
+        "tofu": {
+          "backendType": "s3",
+          "files": [
+            "main.tf"
+          ],
+          "sensitive": [
+            "api_token"
+          ],
+          "version": [
+            ">=1.5"
+          ]
+        }
+      }
+    },
+    {
+      "name": "both-same-name",
+      "files": {
+        "main.tf": "terraform {\n  required_version = \">= 1.2\"\n}\n",
+        "main.tf.json": "{\"terraform\": {\"required_version\": \">= 1.5\", \"backend\": {\"s3\": {\"bucket\": \"b\", \"key\": \"k\"}}}, \"variable\": {\"api_token\": {\"type\": \"string\", \"sensitive\": true}}}"
+      },
+      "upstream": {
+        "tf": {
+          "backendType": "s3",
+          "files": [
+            "main.tf",
+            "main.tf.json"
+          ],
+          "sensitive": [
+            "api_token"
+          ],
+          "version": [
+            ">=1.2"
+          ]
+        },
+        "tofu": {
+          "backendType": "s3",
+          "files": [
+            "main.tf",
+            "main.tf.json"
+          ],
+          "sensitive": [
+            "api_token"
+          ],
+          "version": [
+            ">=1.2"
+          ]
+        }
+      }
+    },
+    {
+      "name": "hcl-backend-json-backend",
+      "files": {
+        "a.tf": "terraform {\n  backend \"local\" {}\n}\n",
+        "b.tf.json": "{\"terraform\": {\"backend\": {\"s3\": {\"bucket\": \"b\"}}}}"
+      },
+      "upstream": {
+        "tf": {
+          "backendType": "s3",
+          "files": [
+            "a.tf",
+            "b.tf.json"
+          ],
+          "sensitive": [],
+          "version": null
+        },
+        "tofu": {
+          "backendType": "s3",
+          "files": [
+            "a.tf",
+            "b.tf.json"
+          ],
+          "sensitive": [],
+          "version": null
+        }
+      }
+    },
+    {
+      "name": "json-backend-only",
+      "files": {
+        "a.tf": "variable \"x\" {}\n",
+        "b.tf.json": "{\"terraform\": {\"backend\": {\"s3\": {\"bucket\": \"b\"}}}}"
+      },
+      "upstream": {
+        "tf": {
+          "backendType": "s3",
+          "files": [
+            "a.tf",
+            "b.tf.json"
+          ],
+          "sensitive": [],
+          "version": null
+        },
+        "tofu": {
+          "backendType": "s3",
+          "files": [
+            "a.tf",
+            "b.tf.json"
+          ],
+          "sensitive": [],
+          "version": null
+        }
+      }
+    },
+    {
+      "name": "json-first-alphabetically",
+      "files": {
+        "z.tf": "terraform {\n  backend \"local\" {}\n}\n",
+        "a.tf.json": "{\"terraform\": {\"backend\": {\"s3\": {\"bucket\": \"b\"}}}}"
+      },
+      "upstream": {
+        "tf": {
+          "backendType": "local",
+          "files": [
+            "a.tf.json",
+            "z.tf"
+          ],
+          "sensitive": [],
+          "version": null
+        },
+        "tofu": {
+          "backendType": "local",
+          "files": [
+            "a.tf.json",
+            "z.tf"
+          ],
+          "sensitive": [],
+          "version": null
+        }
+      }
+    },
+    {
+      "name": "tofu-json-override",
+      "files": {
+        "main.tf.json": "{\"terraform\": {\"backend\": {\"s3\": {\"bucket\": \"tf\"}}}}",
+        "main.tofu.json": "{\"terraform\": {\"backend\": {\"gcs\": {\"bucket\": \"tofu\"}}}}"
+      },
+      "upstream": {
+        "tf": {
+          "backendType": "s3",
+          "files": [
+            "main.tf.json"
+          ],
+          "sensitive": [],
+          "version": null
+        },
+        "tofu": {
+          "backendType": "gcs",
+          "files": [
+            "main.tofu.json"
+          ],
+          "sensitive": [],
+          "version": null
+        }
+      }
+    },
+    {
+      "name": "tofu-hcl-override",
+      "files": {
+        "main.tf": "terraform {\n  backend \"s3\" {}\n}\n",
+        "main.tofu": "terraform {\n  backend \"gcs\" {}\n}\n"
+      },
+      "upstream": {
+        "tf": {
+          "backendType": "s3",
+          "files": [
+            "main.tf"
+          ],
+          "sensitive": [],
+          "version": null
+        },
+        "tofu": {
+          "backendType": "gcs",
+          "files": [
+            "main.tofu"
+          ],
+          "sensitive": [],
+          "version": null
+        }
+      }
+    },
+    {
+      "name": "tofu-json-ignored",
+      "files": {
+        "main.tf.json": "{\"terraform\": {\"backend\": {\"s3\": {\"bucket\": \"b\"}}}}",
+        "other.tofu.json": "{\"terraform\": {\"backend\": {\"gcs\": {\"bucket\": \"g\"}}}}"
+      },
+      "upstream": {
+        "tf": {
+          "backendType": "s3",
+          "files": [
+            "main.tf.json"
+          ],
+          "sensitive": [],
+          "version": null
+        },
+        "tofu": {
+          "backendType": "s3",
+          "files": [
+            "main.tf.json",
+            "other.tofu.json"
+          ],
+          "sensitive": [],
+          "version": null
+        }
+      }
+    },
+    {
+      "name": "malformed-json",
+      "files": {
+        "broken.tf.json": "{ not json",
+        "main.tf": "terraform {\n  required_version = \">= 1.2\"\n}\n"
+      },
+      "upstream": {
+        "tf": {
+          "backendType": "local",
+          "files": [
+            "broken.tf.json",
+            "main.tf"
+          ],
+          "sensitive": [],
+          "version": [
+            ">=1.2"
+          ]
+        },
+        "tofu": {
+          "backendType": "local",
+          "files": [
+            "broken.tf.json",
+            "main.tf"
+          ],
+          "sensitive": [],
+          "version": [
+            ">=1.2"
+          ]
+        }
+      }
+    },
+    {
+      "name": "structurally-wrong-json",
+      "files": {
+        "main.tf.json": "{\"terraform\": {\"backend\": {\"s3\": {\"bucket\": \"b\"}}}, \"variable\": [\"nonsense\"]}"
+      },
+      "upstream": {
+        "tf": {
+          "backendType": "local",
+          "files": [
+            "main.tf.json"
+          ],
+          "sensitive": [],
+          "version": null
+        },
+        "tofu": {
+          "backendType": "local",
+          "files": [
+            "main.tf.json"
+          ],
+          "sensitive": [],
+          "version": null
+        }
+      }
+    },
+    {
+      "name": "json-cloud",
+      "files": {
+        "main.tf.json": "{\"terraform\": {\"cloud\": {\"organization\": \"org\", \"workspaces\": {\"name\": \"ws\"}}}}"
+      },
+      "upstream": {
+        "tf": {
+          "backendType": "cloud",
+          "files": [
+            "main.tf.json"
+          ],
+          "sensitive": [],
+          "version": null
+        },
+        "tofu": {
+          "backendType": "cloud",
+          "files": [
+            "main.tf.json"
+          ],
+          "sensitive": [],
+          "version": null
+        }
+      }
+    },
+    {
+      "name": "json-sensitive-forms",
+      "files": {
+        "main.tf.json": "{\"variable\": [{\"a\": {\"sensitive\": true}}, {\"b\": {\"sensitive\": \"true\"}, \"c\": {\"sensitive\": false}}]}"
+      },
+      "upstream": {
+        "tf": {
+          "backendType": "local",
+          "files": [
+            "main.tf.json"
+          ],
+          "sensitive": [
+            "a",
+            "b"
+          ],
+          "version": null
+        },
+        "tofu": {
+          "backendType": "local",
+          "files": [
+            "main.tf.json"
+          ],
+          "sensitive": [
+            "a",
+            "b"
+          ],
+          "version": null
+        }
+      }
+    },
+    {
+      "name": "sensitive-both-syntaxes",
+      "files": {
+        "a.tf": "variable \"from_hcl\" {\n  sensitive = true\n}\n",
+        "b.tf.json": "{\"variable\": {\"from_json\": {\"sensitive\": true}}}"
+      },
+      "upstream": {
+        "tf": {
+          "backendType": "local",
+          "files": [
+            "a.tf",
+            "b.tf.json"
+          ],
+          "sensitive": [
+            "from_hcl",
+            "from_json"
+          ],
+          "version": null
+        },
+        "tofu": {
+          "backendType": "local",
+          "files": [
+            "a.tf",
+            "b.tf.json"
+          ],
+          "sensitive": [
+            "from_hcl",
+            "from_json"
+          ],
+          "version": null
+        }
+      }
+    },
+    {
+      "name": "empty",
+      "files": {},
+      "upstream": {
+        "tf": {
+          "backendType": "local",
+          "files": [],
+          "sensitive": [],
+          "version": null
+        },
+        "tofu": {
+          "backendType": "local",
+          "files": [],
+          "sensitive": [],
+          "version": null
+        }
+      }
+    },
+    {
+      "name": "no-module-files",
+      "files": {
+        "README.md": "hi",
+        "data.json": "{}"
+      },
+      "upstream": {
+        "tf": {
+          "backendType": "local",
+          "files": [],
+          "sensitive": [],
+          "version": null
+        },
+        "tofu": {
+          "backendType": "local",
+          "files": [],
+          "sensitive": [],
+          "version": null
+        }
+      }
+    }
+  ]
+}

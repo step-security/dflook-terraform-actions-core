@@ -1,0 +1,946 @@
+[
+  {
+    "name": "sensitive: object keyed by name",
+    "input": {
+      "variable": {
+        "api_token": {
+          "type": "string",
+          "sensitive": true
+        },
+        "plain": {
+          "type": "string"
+        }
+      }
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": null,
+      "sensitiveVariables": [
+        "api_token"
+      ]
+    }
+  },
+  {
+    "name": "sensitive: array of objects",
+    "input": {
+      "variable": [
+        {
+          "api_token": {
+            "type": "string",
+            "sensitive": true
+          }
+        },
+        {
+          "other": {
+            "type": "string",
+            "sensitive": true
+          }
+        }
+      ]
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": null,
+      "sensitiveVariables": [
+        "api_token",
+        "other"
+      ]
+    }
+  },
+  {
+    "name": "sensitive: array, several names in one object",
+    "input": {
+      "variable": [
+        {
+          "api_token": {
+            "type": "string",
+            "sensitive": true
+          },
+          "other": {
+            "type": "string",
+            "sensitive": true
+          }
+        }
+      ]
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": null,
+      "sensitiveVariables": [
+        "api_token",
+        "other"
+      ]
+    }
+  },
+  {
+    "name": "sensitive: body as array under name",
+    "input": {
+      "variable": {
+        "api_token": [
+          {
+            "type": "string",
+            "sensitive": true
+          }
+        ]
+      }
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": null,
+      "sensitiveVariables": [
+        "api_token"
+      ]
+    }
+  },
+  {
+    "name": "sensitive: array of objects with body arrays",
+    "input": {
+      "variable": [
+        {
+          "api_token": [
+            {
+              "type": "string",
+              "sensitive": true
+            }
+          ]
+        }
+      ]
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": null,
+      "sensitiveVariables": [
+        "api_token"
+      ]
+    }
+  },
+  {
+    "name": "sensitive: quoted string true",
+    "input": {
+      "variable": {
+        "api_token": {
+          "type": "string",
+          "sensitive": "true"
+        }
+      }
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": null,
+      "sensitiveVariables": [
+        "api_token"
+      ]
+    }
+  },
+  {
+    "name": "sensitive: not sensitive",
+    "input": {
+      "variable": {
+        "a": {
+          "sensitive": false
+        },
+        "b": {
+          "sensitive": "false"
+        },
+        "c": {
+          "type": "string"
+        }
+      }
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": null,
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "backend: object",
+    "input": {
+      "terraform": {
+        "backend": {
+          "s3": {
+            "bucket": "b",
+            "key": "k",
+            "region": "eu-west-1"
+          }
+        }
+      }
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": {
+        "type": "s3",
+        "config": {
+          "bucket": "b",
+          "key": "k",
+          "region": "eu-west-1"
+        }
+      },
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "backend: array",
+    "input": {
+      "terraform": {
+        "backend": [
+          {
+            "s3": {
+              "bucket": "b",
+              "key": "k",
+              "region": "eu-west-1"
+            }
+          }
+        ]
+      }
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": {
+        "type": "s3",
+        "config": {
+          "bucket": "b",
+          "key": "k",
+          "region": "eu-west-1"
+        }
+      },
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "backend: body array under label",
+    "input": {
+      "terraform": {
+        "backend": {
+          "s3": [
+            {
+              "bucket": "b",
+              "key": "k",
+              "region": "eu-west-1"
+            }
+          ]
+        }
+      }
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": {
+        "type": "s3",
+        "config": {
+          "bucket": "b",
+          "key": "k",
+          "region": "eu-west-1"
+        }
+      },
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "backend: both arrays",
+    "input": {
+      "terraform": {
+        "backend": [
+          {
+            "s3": [
+              {
+                "bucket": "b",
+                "key": "k",
+                "region": "eu-west-1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": {
+        "type": "s3",
+        "config": {
+          "bucket": "b",
+          "key": "k",
+          "region": "eu-west-1"
+        }
+      },
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "backend: repeated terraform block",
+    "input": {
+      "terraform": [
+        {
+          "required_version": ">= 1.5"
+        },
+        {
+          "backend": {
+            "s3": {
+              "bucket": "b",
+              "key": "k",
+              "region": "eu-west-1"
+            }
+          }
+        }
+      ]
+    },
+    "expected": {
+      "requiredVersion": ">= 1.5",
+      "backend": {
+        "type": "s3",
+        "config": {
+          "bucket": "b",
+          "key": "k",
+          "region": "eu-west-1"
+        }
+      },
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "backend: arrays at every level",
+    "input": {
+      "terraform": [
+        {
+          "required_version": ">= 1.5"
+        },
+        {
+          "backend": [
+            {
+              "s3": [
+                {
+                  "bucket": "b",
+                  "key": "k",
+                  "region": "eu-west-1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "expected": {
+      "requiredVersion": ">= 1.5",
+      "backend": {
+        "type": "s3",
+        "config": {
+          "bucket": "b",
+          "key": "k",
+          "region": "eu-west-1"
+        }
+      },
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "cloud: workspaces object",
+    "input": {
+      "terraform": {
+        "cloud": {
+          "organization": "org",
+          "workspaces": {
+            "name": "ws"
+          }
+        }
+      }
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": {
+        "type": "cloud",
+        "config": {
+          "organization": "org",
+          "workspaces": [
+            {
+              "name": "ws"
+            }
+          ]
+        }
+      },
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "cloud: arrays",
+    "input": {
+      "terraform": {
+        "cloud": [
+          {
+            "organization": "org",
+            "workspaces": [
+              {
+                "name": "ws"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": {
+        "type": "cloud",
+        "config": {
+          "organization": "org",
+          "workspaces": [
+            {
+              "name": "ws"
+            }
+          ]
+        }
+      },
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "remote: workspaces object",
+    "input": {
+      "terraform": {
+        "backend": {
+          "remote": {
+            "organization": "org",
+            "workspaces": {
+              "name": "ws"
+            }
+          }
+        }
+      }
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": {
+        "type": "remote",
+        "config": {
+          "organization": "org",
+          "workspaces": [
+            {
+              "name": "ws"
+            }
+          ]
+        }
+      },
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "remote: workspaces array",
+    "input": {
+      "terraform": {
+        "backend": {
+          "remote": {
+            "organization": "org",
+            "workspaces": [
+              {
+                "prefix": "p"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": {
+        "type": "remote",
+        "config": {
+          "organization": "org",
+          "workspaces": [
+            {
+              "prefix": "p"
+            }
+          ]
+        }
+      },
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "remote: body as array",
+    "input": {
+      "terraform": {
+        "backend": {
+          "remote": [
+            {
+              "organization": "org",
+              "workspaces": [
+                {
+                  "name": "ws"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": {
+        "type": "remote",
+        "config": {
+          "organization": "org",
+          "workspaces": [
+            {
+              "name": "ws"
+            }
+          ]
+        }
+      },
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "no backend",
+    "input": {
+      "terraform": {
+        "required_version": ">= 1.5",
+        "required_providers": {
+          "aws": {
+            "source": "hashicorp/aws"
+          }
+        }
+      }
+    },
+    "expected": {
+      "requiredVersion": ">= 1.5",
+      "backend": null,
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "required_version: object",
+    "input": {
+      "terraform": {
+        "required_version": ">= 1.5"
+      }
+    },
+    "expected": {
+      "requiredVersion": ">= 1.5",
+      "backend": null,
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "required_version: array",
+    "input": {
+      "terraform": [
+        {
+          "required_version": ">= 1.5"
+        }
+      ]
+    },
+    "expected": {
+      "requiredVersion": ">= 1.5",
+      "backend": null,
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "required_version: second of two blocks",
+    "input": {
+      "terraform": [
+        {
+          "backend": {
+            "s3": {
+              "bucket": "b",
+              "key": "k",
+              "region": "eu-west-1"
+            }
+          }
+        },
+        {
+          "required_version": ">= 1.5"
+        }
+      ]
+    },
+    "expected": {
+      "requiredVersion": ">= 1.5",
+      "backend": {
+        "type": "s3",
+        "config": {
+          "bucket": "b",
+          "key": "k",
+          "region": "eu-west-1"
+        }
+      },
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "no terraform block",
+    "input": {
+      "variable": {
+        "api_token": {
+          "type": "string",
+          "sensitive": true
+        }
+      }
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": null,
+      "sensitiveVariables": [
+        "api_token"
+      ]
+    }
+  },
+  {
+    "name": "cloud: hostname",
+    "input": {
+      "terraform": {
+        "cloud": {
+          "hostname": "tfe.example.com",
+          "organization": "org",
+          "workspaces": {
+            "name": "ws"
+          }
+        }
+      }
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": {
+        "type": "cloud",
+        "config": {
+          "hostname": "tfe.example.com",
+          "organization": "org",
+          "workspaces": [
+            {
+              "name": "ws"
+            }
+          ]
+        }
+      },
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "remote: hostname",
+    "input": {
+      "terraform": {
+        "backend": {
+          "remote": {
+            "hostname": "tfe.example.com",
+            "organization": "org",
+            "workspaces": {
+              "prefix": "p"
+            }
+          }
+        }
+      }
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": {
+        "type": "remote",
+        "config": {
+          "hostname": "tfe.example.com",
+          "organization": "org",
+          "workspaces": [
+            {
+              "prefix": "p"
+            }
+          ]
+        }
+      },
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "empty object",
+    "input": {},
+    "expected": {
+      "requiredVersion": null,
+      "backend": null,
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "terraform empty",
+    "input": {
+      "terraform": {}
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": null,
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "terraform as string (malformed)",
+    "input": {
+      "terraform": "nonsense"
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": null,
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "variable as string (malformed)",
+    "input": {
+      "variable": "nonsense"
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": null,
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "required_version non-string",
+    "input": {
+      "terraform": {
+        "required_version": 12
+      }
+    },
+    "expected": {
+      "requiredVersion": "12",
+      "backend": null,
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "variable body list of non-dict",
+    "input": {
+      "variable": [
+        {
+          "a": [
+            "nonsense"
+          ]
+        }
+      ]
+    },
+    "throws": true
+  },
+  {
+    "name": "variable value is string",
+    "input": {
+      "variable": {
+        "a": "nonsense"
+      }
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": null,
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "variable block is a string in list",
+    "input": {
+      "variable": [
+        "nonsense"
+      ]
+    },
+    "throws": true
+  },
+  {
+    "name": "terraform block is string in list",
+    "input": {
+      "terraform": [
+        "nonsense"
+      ]
+    },
+    "throws": true
+  },
+  {
+    "name": "backend value is string",
+    "input": {
+      "terraform": {
+        "backend": "nonsense"
+      }
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": null,
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "backend empty object",
+    "input": {
+      "terraform": {
+        "backend": {}
+      }
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": null,
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "backend label maps to string",
+    "input": {
+      "terraform": {
+        "backend": {
+          "s3": "nonsense"
+        }
+      }
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": {
+        "type": "s3",
+        "config": {}
+      },
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "cloud is string",
+    "input": {
+      "terraform": {
+        "cloud": "nonsense"
+      }
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": null,
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "cloud empty",
+    "input": {
+      "terraform": {
+        "cloud": {}
+      }
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": {
+        "type": "cloud",
+        "config": {}
+      },
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "two sensitive config blocks same name",
+    "input": {
+      "variable": {
+        "a": [
+          {
+            "sensitive": true
+          },
+          {
+            "sensitive": true
+          }
+        ]
+      }
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": null,
+      "sensitiveVariables": [
+        "a",
+        "a"
+      ]
+    }
+  },
+  {
+    "name": "sensitive is 1",
+    "input": {
+      "variable": {
+        "a": {
+          "sensitive": 1
+        }
+      }
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": null,
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "top level is a list",
+    "input": [],
+    "throws": true
+  },
+  {
+    "name": "top level is a string",
+    "input": "nonsense",
+    "throws": true
+  },
+  {
+    "name": "cloud before backend in same block",
+    "input": {
+      "terraform": {
+        "cloud": {
+          "organization": "o"
+        },
+        "backend": {
+          "s3": {
+            "bucket": "b"
+          }
+        }
+      }
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": {
+        "type": "cloud",
+        "config": {
+          "organization": "o"
+        }
+      },
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "first block cloud, second backend",
+    "input": {
+      "terraform": [
+        {
+          "cloud": {
+            "organization": "o"
+          }
+        },
+        {
+          "backend": {
+            "s3": {
+              "bucket": "b"
+            }
+          }
+        }
+      ]
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": {
+        "type": "cloud",
+        "config": {
+          "organization": "o"
+        }
+      },
+      "sensitiveVariables": []
+    }
+  },
+  {
+    "name": "backend two labels",
+    "input": {
+      "terraform": {
+        "backend": {
+          "s3": {
+            "bucket": "b"
+          },
+          "local": {
+            "path": "p"
+          }
+        }
+      }
+    },
+    "expected": {
+      "requiredVersion": null,
+      "backend": {
+        "type": "s3",
+        "config": {
+          "bucket": "b"
+        }
+      },
+      "sensitiveVariables": []
+    }
+  }
+]
