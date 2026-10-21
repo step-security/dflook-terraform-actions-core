@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'fs'
 import { resolve } from 'path'
 import { splitList } from '../terraform/exec.js'
-import type { TerraformModule } from '../terraform/module.js'
+import { type TerraformModule, getJsonBackend } from '../terraform/module.js'
 
 /**
  * Assembling the backend configuration.
@@ -99,10 +99,53 @@ function unquote(value: string): string {
   return trimmed
 }
 
-/** The backend type and the config written in the module. */
+/**
+ * Renders a value from a JSON module the way the HCL reader would have.
+ *
+ * The HCL reader collapses a nested block to one space-joined string of its
+ * `key = value` lines, so the JSON equivalent has to be rendered the same way
+ * or the same configuration would fingerprint differently depending on which
+ * syntax it was written in.
+ */
+function renderJsonValue(value: unknown): string {
+  if (typeof value === 'string') return value
+  if (value === null || value === undefined) return ''
+  if (Array.isArray(value)) return value.map(renderJsonValue).join(' ')
+
+  if (typeof value === 'object') {
+    return Object.entries(value as Record<string, unknown>)
+      .map(([key, inner]) =>
+        typeof inner === 'string' ? `${key} = "${inner}"` : `${key} = ${renderJsonValue(inner)}`
+      )
+      .join(' ')
+  }
+
+  return String(value)
+}
+
+/** The backend config declared in a JSON module file, flattened like the HCL one. */
+function readJsonBackendConfig(module: TerraformModule): BackendConfig {
+  const backend = getJsonBackend(module)
+  if (!backend) return {}
+
+  const config: BackendConfig = {}
+  for (const [key, value] of Object.entries(backend.config)) {
+    config[key] = renderJsonValue(value)
+  }
+  return config
+}
+
+/**
+ * The backend type and the config written in the module.
+ *
+ * HCL is read first; a module written in JSON is read only when there is no
+ * backend block in any HCL file.
+ */
 export function readModuleBackendConfig(module: TerraformModule): BackendConfig {
   const block = backendBlockBody(module.body)
-  return block ? readAssignments(block) : {}
+  if (block) return readAssignments(block)
+
+  return readJsonBackendConfig(module)
 }
 
 /** Reads `key = value` pairs from the backend config files. */

@@ -153,7 +153,7 @@ describe('constraints applied during resolution', () => {
     const result = resolveVersion(
       { modulePath: scratch(), workspaceRoot: '/', backendConfig: 'bucket=example' },
       {
-        module: { body: '', files: [] },
+        module: { body: '', files: [], json: [] },
         versions: [new Version('0.9.0'), new Version('0.9.1')],
         env: {},
       }
@@ -171,7 +171,7 @@ describe('constraints applied during resolution', () => {
       const result = resolveVersion(
         { modulePath: scratch(), workspaceRoot: '/' },
         {
-          module: { body: '', files: [] },
+          module: { body: '', files: [], json: [] },
           versions: [new Version('0.12.31'), new Version('0.13.5')],
           env: {},
         }
@@ -186,7 +186,7 @@ describe('constraints applied during resolution', () => {
     currentArch = 'amd64'
     const result = resolveVersion(
       { modulePath: scratch(), workspaceRoot: '/' },
-      { module: { body: '', files: [] }, versions: [new Version('0.12.31')], env: {} }
+      { module: { body: '', files: [], json: [] }, versions: [new Version('0.12.31')], env: {} }
     )
     expect(result?.version.toString()).toBe('0.12.31')
   })
@@ -195,7 +195,7 @@ describe('constraints applied during resolution', () => {
     const result = resolveVersion(
       { modulePath: scratch(), workspaceRoot: '/' },
       {
-        module: { body: '', files: [] },
+        module: { body: '', files: [], json: [] },
         versions: AVAILABLE,
         env: {},
         backendConstraints: () => [new Constraint('>=99.0')],

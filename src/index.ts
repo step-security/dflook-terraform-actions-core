@@ -150,6 +150,7 @@ export {
   endGroup,
   error,
   info,
+  jobUrl,
   resumeWorkflowCommands,
   startGroup,
   stopWorkflowCommands,

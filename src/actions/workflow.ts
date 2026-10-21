@@ -76,3 +76,26 @@ export async function withWorkflowCommandsStopped<T>(action: () => Promise<T>): 
 export function commandsStopped(): boolean {
   return stopToken !== undefined
 }
+
+/**
+ * URL of the job running this action.
+ *
+ * Depot runs GitHub Actions workflows on its own infrastructure, so the run
+ * URL assembled from the GitHub variables points at a run that does not exist
+ * there. Depot supplies `DEPOT_JOB_URL` for this, and it takes precedence when
+ * present.
+ *
+ * Undefined when the GitHub variables are absent, which is the case outside a
+ * workflow run. A caller omits the link rather than publishing a broken one.
+ */
+export function jobUrl(): string | undefined {
+  const depot = process.env.DEPOT_JOB_URL
+  if (depot) return depot
+
+  const server = process.env.GITHUB_SERVER_URL
+  const repository = process.env.GITHUB_REPOSITORY
+  const runId = process.env.GITHUB_RUN_ID
+  if (!server || !repository || !runId) return undefined
+
+  return `${server}/${repository}/actions/runs/${runId}`
+}
