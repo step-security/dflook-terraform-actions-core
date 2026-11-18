@@ -26,6 +26,7 @@ export function releaseArch(): string {
 }
 
 /** Name of the executable inside a release archive. */
-export function executableName(): string {
-  return process.platform === 'win32' ? 'terraform.exe' : 'terraform'
+export function executableName(product: 'Terraform' | 'OpenTofu' = 'Terraform'): string {
+  const base = product === 'OpenTofu' ? 'tofu' : 'terraform'
+  return process.platform === 'win32' ? `${base}.exe` : base
 }
