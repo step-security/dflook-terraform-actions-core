@@ -15,8 +15,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
-    "test": "jest",
-    "prepare": "npm run build"
+    "test": "jest"
   },
   "jest": {
     "preset": "ts-jest",
