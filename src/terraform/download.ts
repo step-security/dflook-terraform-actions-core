@@ -48,7 +48,7 @@ export async function acquireTerraform(version: Version): Promise<string> {
   const cached = toolCache.find('terraform', text, arch)
   if (cached) {
     core.info(`Using cached Terraform ${text}`)
-    return join(cached, executableName())
+    return join(cached, executableName('Terraform'))
   }
 
   const archiveName = `terraform_${text}_${platform}_${arch}.zip`
@@ -71,7 +71,7 @@ export async function acquireTerraform(version: Version): Promise<string> {
 
   const extracted = await toolCache.extractZip(archivePath, join(workDir, 'extracted'))
   const installed = await toolCache.cacheDir(extracted, 'terraform', text, arch)
-  return join(installed, executableName())
+  return join(installed, executableName('Terraform'))
 }
 
 /**
@@ -88,7 +88,7 @@ export async function acquireOpenTofu(version: Version): Promise<string> {
   const cached = toolCache.find('opentofu', text, arch)
   if (cached) {
     core.info(`Using cached OpenTofu ${text}`)
-    return join(cached, executableName())
+    return join(cached, executableName('OpenTofu'))
   }
 
   const archiveName = `tofu_${text}_${platform}_${arch}.zip`
@@ -109,7 +109,7 @@ export async function acquireOpenTofu(version: Version): Promise<string> {
 
   const extracted = await toolCache.extractZip(archivePath, join(workDir, 'extracted'))
   const installed = await toolCache.cacheDir(extracted, 'opentofu', text, arch)
-  return join(installed, executableName())
+  return join(installed, executableName('OpenTofu'))
 }
 
 /** Downloads whichever product the version belongs to. */
